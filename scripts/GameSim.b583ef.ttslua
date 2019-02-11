@@ -1,0 +1,1599 @@
+--[[
+	-- extra logic to add eventually
+	if x:find("acc") then
+		if x:find("acc%+weaponProf") then
+			local objbtns = FullCharSheet.getTable("buttons")
+			for i, v in pairs(objbtns) do
+				prefix = string.sub(i, 1, 12)
+				if prefix == "proficiency_" then
+					if v.label ~= '' then
+						Baseacc = Baseacc - 1
+					end
+				end
+			end
+
+	if x:find("str") then
+		if x:find("str%+insanity") then
+			BaseStr = tonumber(getObjectFromGUID(self.getVar("FullCharSheetGUID")).getTable("buttons").insanity.label)
+		elseif x:find("str%+courage") then
+			local objbtns = FullCharSheet.getTable("buttons")
+			for i, v in pairs(objbtns) do
+				prefix = string.sub(i, 1, 8)
+				if prefix == "courage_" then
+					if v.label ~= '' then
+						BaseStr = BaseStr + 1
+					end
+				end
+			end
+		else
+
+]]
+
+local debugEnable = true
+local posY = 0.2
+gamesim_state = {verbose_enabled = false, hide_draw_ai = false, hide_discard_ai = true}
+gamesim_state_hide_player_attack = {}
+gamesim_state_hide_player_move = {}
+gamesim_ui_buttons = {}
+gamesim_players = {}
+gamesim_monster = {
+	movement = 0,
+	speed = 0,
+	accuracy = 0,
+	damage = 0,
+	toughness = 0,
+	evasion = 0,
+	luck = 0
+}
+
+function player_move_1(object, playerColorClicked)
+	player_move(1, playerColorClicked)
+end
+
+function player_attack_1(object, playerColorClicked)
+	player_attack(1, false)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_attack_blind_1(object, playerColorClicked)
+	player_attack(1, true)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_knockdown_1(object, playerColorClicked)
+	player_knockdown(1)
+end
+
+function player_reset_turn_1()
+	player_reset_turn(1)
+end
+
+function player_move_2(object, playerColorClicked)
+	player_move(2, playerColorClicked)
+end
+
+function player_attack_2(object, playerColorClicked)
+	player_attack(2, false)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_attack_blind_2(object, playerColorClicked)
+	player_attack(2, true)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_knockdown_2(object, playerColorClicked)
+	player_knockdown(2)
+end
+
+function player_reset_turn_2()
+	player_reset_turn(2)
+end
+
+function player_move_3(object, playerColorClicked)
+	player_move(3, playerColorClicked)
+end
+
+function player_attack_3(object, playerColorClicked)
+	player_attack(3, false)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_attack_blind_3(object, playerColorClicked)
+	player_attack(3, true)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_knockdown_3(object, playerColorClicked)
+	player_knockdown(3)
+end
+
+function player_reset_turn_3()
+	player_reset_turn(3)
+end
+
+function player_move_4(object, playerColorClicked)
+	player_move(4, playerColorClicked)
+end
+
+function player_attack_4(object, playerColorClicked)
+	player_attack(4, false)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_attack_blind_4(object, playerColorClicked)
+	player_attack(4, true)
+	move_camera_to_home(playerColorClicked)
+end
+
+function player_knockdown_4(object, playerColorClicked)
+	player_knockdown(4)
+end
+
+function player_reset_turn_4()
+	player_reset_turn(4)
+end
+
+function monster_acc_ai_1()
+	set_monster_ai_acc(1)
+end
+
+function monster_acc_ai_2()
+	set_monster_ai_acc(2)
+end
+
+function monster_acc_ai_3()
+	set_monster_ai_acc(3)
+end
+
+function monster_acc_ai_4()
+	set_monster_ai_acc(4)
+end
+
+function monster_acc_ai_5()
+	set_monster_ai_acc(5)
+end
+
+function monster_acc_ai_6()
+	set_monster_ai_acc(6)
+end
+
+function monster_speed_ai_1()
+	set_monster_speed(1)
+end
+
+function monster_speed_ai_2()
+	set_monster_speed(2)
+end
+
+function monster_speed_ai_3()
+	set_monster_speed(3)
+end
+
+function monster_speed_ai_4()
+	set_monster_speed(4)
+end
+
+function monster_speed_ai_5()
+	set_monster_speed(5)
+end
+
+function monster_speed_ai_6()
+	set_monster_speed(6)
+end
+
+function monster_attack_p1(object, playerColorClicked)
+	monster_attack(1)
+	move_camera_to_P1_card(object, playerColorClicked)
+end
+
+function monster_attack_p2(object, playerColorClicked)
+	monster_attack(2)
+	move_camera_to_P2_card(object, playerColorClicked)
+end
+
+function monster_attack_p3(object, playerColorClicked)
+	monster_attack(3)
+	move_camera_to_P3_card(object, playerColorClicked)
+end
+
+function monster_attack_p4(object, playerColorClicked)
+	monster_attack(4)
+	move_camera_to_P4_card(object, playerColorClicked)
+end
+
+function onLoad(saved_data)
+	gamesim_state.monster_is_knocked_down = false
+	gamesim_state.wound_value = 0
+	gamesim_state.wound_crit_value = 0
+	gamesim_state.player_is_knocked_down = {}
+	createButtons()
+	readMonster()
+	readPlayers()
+	player_hide_wound_buttons()
+
+	if saved_data != '' then
+		--print('onLoad saved_data')
+		dataDict = dictionary(dataToSave())
+        local loaded_data = decompressState(saved_data, dataDict)
+		--print( 'loaded_data.saved_data ' .. loaded_data.saved_data[1])
+		gamesim_state = loaded_data.gamesim_state
+		gamesim_state_hide_player_attack = loaded_data.gamesim_state_hide_player_attack
+		gamesim_state_hide_player_move = loaded_data.gamesim_state_hide_player_move
+
+		update_monster_buttons()
+		for iPlayer=1, 4 do
+			if gamesim_state_hide_player_attack then
+				if gamesim_state_hide_player_attack[iPlayer] then
+					player_hide_attack_buttons(iPlayer)
+				end
+			else
+				gamesim_state_hide_player_attack = {}
+			end
+
+			if gamesim_state_hide_player_move then
+				if gamesim_state_hide_player_move[iPlayer] then
+					player_hide_move_buttons(iPlayer)
+				end
+			else
+				gamesim_state_hide_player_move = {}
+			end
+		end
+
+	end
+end
+
+function createButtons()
+	-- resetButtons()
+	local buttonIndex = 0;
+	btn_params = {
+		click_function = "",
+		function_owner = self,
+		label 			= "",
+		position 		= {},
+		scale 			= {1,1,1},
+		width 			= 700,
+		height 			= 200,
+		font_size 		= 200,
+		color 			= {0, 0, 0, 100},
+		font_color 		= {1, 1, 1, 100}
+	}
+
+	local upperX = -30;
+	local upperZ = -1;
+	local rightX = -5
+	local monLeftX = 5
+	local centerX = 0;
+	local centerZ = 0;
+	local deltaZ = 0.4
+	local deltaX = 3.0
+	local smallDeltaX = 0.3
+
+	local curZ = upperZ
+
+	btn_params.click_function = "admin_log"
+	btn_params.position = {rightX, posY, curZ}
+	btn_params.label = "Log state"
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.click_function = "verbose_toggle"
+	btn_params.position = {rightX, posY, curZ}
+	btn_params.label = "Verbose Toggle (Off)"
+	gamesim_ui_buttons.verbose_toggle = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.click_function = "refresh_stats"
+	btn_params.position = {rightX, posY, curZ}
+	btn_params.label = "Refresh"
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	local monsterX = upperX - 2
+	curZ = upperZ
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.label = "[Monster]"
+	btn_params.click_function = "dud"
+	btn_params.position = {monsterX, posY, curZ}
+	btn_params.tooltip = "   "
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 750
+	btn_params.height = 80
+
+	curZ = curZ + deltaZ
+	btn_params.label = "Draw AI"
+	btn_params.click_function = "monster_draw_ai"
+	btn_params.position = {monsterX + deltaX, posY, curZ}
+	gamesim_ui_buttons.draw_ai = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.label = "Discard AI"
+	btn_params.click_function = "monster_discard_ai"
+	btn_params.position = {monsterX + deltaX, posY, curZ}
+	gamesim_ui_buttons.discard_ai = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.label = "Put AI in play"
+	btn_params.click_function = "monster_play_ai"
+	btn_params.position = {monsterX + deltaX, posY, curZ}
+	gamesim_ui_buttons.play_ai = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.label = "Reset turn"
+	btn_params.click_function = "monster_reset_turn"
+	btn_params.position = {monsterX + deltaX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = upperZ
+	curZ = curZ + deltaZ
+	btn_params.label = "Move"
+	btn_params.click_function = "monster_move"
+	btn_params.position = {monsterX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.label = "Knockdown"
+	btn_params.click_function = "monster_knockdown"
+	btn_params.position = {monsterX, posY, curZ}
+	self.createButton(btn_params)
+	gamesim_ui_buttons.monster_knockdown = buttonIndex
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	curZ = curZ + deltaZ
+
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.label = "AI Card Speed"
+	btn_params.click_function = "dud"
+	btn_params.position = {monsterX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.width = 250
+	btn_params.height = 80
+	btn_params.label = "-"
+	btn_params.click_function = "monster_speed_ai_minus"
+	btn_params.position = {monsterX - smallDeltaX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.label = "2"
+	btn_params.click_function = "dud"
+	btn_params.position = {monsterX, posY, curZ}
+	gamesim_ui_buttons.monster_speed = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 250
+	btn_params.height = 80
+	btn_params.label = "+"
+	btn_params.click_function = "monster_speed_ai_plus"
+	btn_params.position = {monsterX + smallDeltaX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	for iNum=1, 6 do
+		btn_params.width = 250
+		btn_params.height = 80
+		btn_params.font_size = 100
+		btn_params.label = '' .. iNum .. ''
+		btn_params.click_function = "monster_speed_ai_" .. iNum
+		btn_params.position = {monsterX - (smallDeltaX*3.5) + (smallDeltaX * iNum), posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+	end
+
+	curZ = curZ + deltaZ
+
+	btn_params.font_size = 200
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.label = "AI Card Acc"
+	btn_params.click_function = "dud"
+	btn_params.position = {monsterX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	btn_params.width = 250
+	btn_params.height = 80
+	btn_params.label = "-"
+	btn_params.click_function = "monster_acc_ai_minus"
+	btn_params.position = {monsterX - smallDeltaX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.label = "2"
+	btn_params.click_function = "dud"
+	btn_params.position = {monsterX, posY, curZ}
+	gamesim_ui_buttons.monster_acc = buttonIndex
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 250
+	btn_params.height = 80
+	btn_params.label = "+"
+	btn_params.click_function = "monster_acc_ai_plus"
+	btn_params.position = {monsterX + smallDeltaX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	curZ = curZ + deltaZ
+	for iNum=1, 6 do
+		btn_params.width = 250
+		btn_params.height = 80
+		btn_params.font_size = 100
+		btn_params.label = '' .. iNum .. ''
+		btn_params.click_function = "monster_acc_ai_" .. iNum
+		btn_params.position = {monsterX - (smallDeltaX*3.5) + (smallDeltaX * iNum), posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+	end
+
+	curZ = curZ + deltaZ
+
+	curZ = upperZ
+	startX = monsterX - deltaX
+	gamesim_ui_buttons.monster_to_hit_desc = {}
+	for iNum=1, 4 do
+		if iNum == 1 then
+			btn_params.font_color = {1, 0.3, 0.3, 100}
+		elseif iNum == 2 then
+			btn_params.font_color = {1, 1, 0, 100}
+		elseif iNum == 3 then
+			btn_params.font_color = {0, 1, 0, 100}
+		elseif iNum == 4 then
+			btn_params.font_color = {0.3, 0.3, 1, 100}
+		end
+
+		gamesim_ui_buttons.monster_to_hit_desc[iNum] = {}
+		btn_params.width = 750
+		btn_params.height = 80
+		btn_params.font_size = 200
+		curZ = curZ + deltaZ
+		btn_params.label = "Attack P" .. iNum
+		btn_params.click_function = "monster_attack_p" .. iNum
+		btn_params.position = {startX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + (deltaZ * 3 / 4)
+		btn_params.width = 0
+		btn_params.height = 0
+		btn_params.font_size = 100
+		btn_params.label = "1d10 + 5"
+		btn_params.click_function = "dud"
+		btn_params.position = {startX, posY, curZ}
+		self.createButton(btn_params)
+		gamesim_ui_buttons.monster_to_hit_desc[iNum] = buttonIndex
+		buttonIndex = buttonIndex + 1
+	end
+
+	btn_params.font_color = {1, 1, 1, 100}
+	btn_params.width = 750
+	btn_params.height = 80
+	btn_params.font_size = 200
+
+	local startX = upperX + deltaX / 2
+	local startZ = upperZ
+
+	gamesim_ui_buttons.to_hit_desc = {}
+	gamesim_ui_buttons.to_wound_desc = {}
+	gamesim_ui_buttons.player_move = {}
+	gamesim_ui_buttons.player_attack = {}
+	gamesim_ui_buttons.player_attack_blind = {}
+	gamesim_ui_buttons.player_knockdown = {}
+	gamesim_ui_buttons.player_activation = {}
+
+	for iPlayer=1, 4 do
+
+		if iPlayer == 1 then
+			btn_params.font_color = {1, 0.3, 0.3, 100}
+		elseif iPlayer == 2 then
+			btn_params.font_color = {1, 1, 0, 100}
+		elseif iPlayer == 3 then
+			btn_params.font_color = {0, 1, 0, 100}
+		elseif iPlayer == 4 then
+			btn_params.font_color = {0.3, 0.3, 1, 100}
+		end
+
+		gamesim_ui_buttons.to_hit_desc[iPlayer] = {}
+		gamesim_ui_buttons.to_wound_desc[iPlayer] = {}
+		curX = startX + iPlayer * deltaX
+		curZ = startZ
+		btn_params.width = 0
+		btn_params.height = 0
+		btn_params.label = "[Player " .. iPlayer .. "]"
+		btn_params.click_function = "dud"
+		btn_params.position = {curX, posY, curZ}
+		btn_params.tooltip = "   "
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		btn_params.width = 750
+		btn_params.height = 80
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Move"
+		btn_params.click_function = "player_move_" .. iPlayer
+		gamesim_ui_buttons.player_move[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Attack"
+		btn_params.click_function = "player_attack_" .. iPlayer
+		gamesim_ui_buttons.player_attack[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + (deltaZ * 3 / 4)
+		btn_params.width = 0
+		btn_params.height = 0
+		btn_params.font_size = 100
+		btn_params.label = "1d10 + 5"
+		btn_params.click_function = "dud"
+		gamesim_ui_buttons.to_hit_desc[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + (deltaZ * 3 / 4)
+		gamesim_ui_buttons.to_wound_desc[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		btn_params.width = 750
+		btn_params.height = 80
+		btn_params.font_size = 200
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Attack Blind"
+		btn_params.click_function = "player_attack_blind_" .. iPlayer
+		gamesim_ui_buttons.player_attack_blind[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Activate (other)"
+		btn_params.click_function = "player_activation_" .. iPlayer
+		gamesim_ui_buttons.player_activation[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Knockdown"
+		btn_params.click_function = "player_knockdown_" .. iPlayer
+		gamesim_ui_buttons.player_knockdown[iPlayer] = buttonIndex
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+
+		curZ = curZ + deltaZ
+		btn_params.label = "Reset turn"
+		btn_params.click_function = "player_reset_turn_" .. iPlayer
+		btn_params.position = {curX, posY, curZ}
+		self.createButton(btn_params)
+		buttonIndex = buttonIndex + 1
+	end
+
+	btn_params.font_color = {1, 1, 1, 100}
+	curX = startX + 6 * deltaX
+	curZ = startZ
+
+	btn_params.width = 750
+	btn_params.height = 80
+	btn_params.label = "Roll to wound"
+	btn_params.click_function = "roll_to_wound"
+	btn_params.position = {curX, posY, curZ}
+	self.createButton(btn_params)
+	gamesim_ui_buttons.roll_for_wound = buttonIndex
+	buttonIndex = buttonIndex + 1
+
+	btn_params.width = 0
+	btn_params.height = 0
+	btn_params.font_size = 100
+	btn_params.label = "1d10 + 5"
+	btn_params.click_function = "dud"
+	curZ = curZ + (deltaZ * 3 / 4)
+	gamesim_ui_buttons.roll_for_wound_desc = buttonIndex
+	btn_params.position = {curX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	btn_params.font_size = 200
+	btn_params.width = 750
+	btn_params.height = 80
+	curZ = curZ + (deltaZ * 6)
+	btn_params.label = "End Round"
+	btn_params.click_function = "end_round"
+	btn_params.position = {curX, posY, curZ}
+	self.createButton(btn_params)
+	buttonIndex = buttonIndex + 1
+
+	refresh_stats()
+	update_monster_buttons()
+end
+
+function readMonster()
+	local boardsTable = Global.getTable('boards')
+	local monsterBoardGuid = boardsTable['boardMonster'].guid
+	local monsterBoard = getObjectFromGUID(monsterBoardGuid)
+	if monsterBoard then
+		local table = monsterBoard.getTable('buttons')
+		if( table == nil ) then
+			return
+		end
+
+		local movement = table.mov.display.label
+		gamesim_monster.movement = tonumber(movement)
+
+		local speed = table.spd.display.label
+		gamesim_monster.speed = tonumber(speed)
+
+		local accuracy = table.acc.display.label
+		gamesim_monster.accuracy = tonumber(accuracy)
+
+		local damage = table.dmg.display.label
+		gamesim_monster.damage = tonumber(damage)
+
+		local toughness = table.tgh.display.label
+		gamesim_monster.toughness = tonumber(toughness)
+
+		local evasion = table.evs.display.label
+		gamesim_monster.evasion = tonumber(evasion)
+
+		local luck = table.lck.display.label
+		gamesim_monster.luck = tonumber(luck)
+	end
+end
+
+function getPlayerStats(charSheetName, playerStat)
+	charSheet = Global.call('getCharSheet', { charSheetName=charSheetName })
+	if charSheet and charSheet != '' then
+		--print('charSheet:' .. charSheet.guid)
+
+		local table = charSheet.getTable('buttons')
+		if table ~= nil then
+			local movement = table.movement.display.label
+			playerStat.movement = tonumber(movement)
+			local speed = table.speed.display.label
+			playerStat.speed = tonumber(speed)
+			local accuracy = table.accuracy.display.label
+			playerStat.accuracy = tonumber(accuracy)
+			local strength = table.strength.display.label
+			playerStat.strength = tonumber(strength)
+			local luck = table.luck.display.label
+			playerStat.luck = tonumber(luck)
+			local evasion = table.evasion.display.label
+			playerStat.evasion = tonumber(evasion)
+			return
+		end
+	end
+
+	--print( 'Player char sheet not found ' .. charSheetName )
+	playerStat.movement = 0
+	playerStat.speed = 0
+	playerStat.accuracy = 0
+	playerStat.strength = 0
+	playerStat.luck = 0
+	playerStat.evasion = 0
+end
+
+function readPlayers()
+	gamesim_players[1] = {}
+	gamesim_players[2] = {}
+	gamesim_players[3] = {}
+	gamesim_players[4] = {}
+	getPlayerStats('player1FullCharSheet', gamesim_players[1]);
+	getPlayerStats('player2FullCharSheet', gamesim_players[2]);
+	getPlayerStats('player3FullCharSheet', gamesim_players[3]);
+	getPlayerStats('player4FullCharSheet', gamesim_players[4]);
+	getPlayerGearGrid('player1FullCharSheet', gamesim_players[1])
+	getPlayerGearGrid('player2FullCharSheet', gamesim_players[2])
+	getPlayerGearGrid('player3FullCharSheet', gamesim_players[3])
+	getPlayerGearGrid('player4FullCharSheet', gamesim_players[4])
+end
+
+function getPlayerGearGrid(charSheetName, playerStat)
+	playerStat.selected_weapon_desc = 'gear, starting gear, 2spd, 8acc, 0str, 1lck';
+
+	local boardsTable = Global.getTable('boards')
+	local playerCharSheet = boardsTable[charSheetName];
+	if playerCharSheet == nil then
+		print( 'Player char sheet not found ' .. charSheetName )
+		return
+	end
+
+	local playerGridZoneId = playerCharSheet.gridZone
+	local zone = getObjectFromGUID(playerGridZoneId)
+	if zone == nil then
+		print( 'Player zone not found ' .. charSheetName .. ' at ' .. playerGridZoneId )
+		return
+	end
+	local foundSelection = false
+	local selectedPos = {x=0, z=0};
+	local objs = zone.getObjects()
+	for k, v in pairs(objs) do
+		if v.getName() == 'Selected Weapon' then
+			foundSelection = true
+			selectedPos.x = v.getPosition().x
+			selectedPos.z = v.getPosition().z
+		end
+	end
+
+	if foundSelection then
+		for k, v in pairs(objs) do
+			if v.tag == 'Card' then
+				deltaX = math.abs(v.getPosition().x - selectedPos.x)
+				deltaZ = math.abs(v.getPosition().z - selectedPos.z)
+				if deltaX < 1.0 and deltaZ < 1.0 then
+					playerStat.selected_weapon_desc = v.getDescription()
+					--print('found selected weapon: ' .. v.getDescription() )
+				end
+			end
+		end
+	end
+
+	playerStat.selected_weapon_stats = read_weapon_stats(playerStat.selected_weapon_desc)
+end
+
+function verbose_toggle()
+	gamesim_state.verbose_enabled = not gamesim_state.verbose_enabled
+	if gamesim_state.verbose_enabled then
+		self.editButton({index=gamesim_ui_buttons.verbose_toggle, label="Verbose Toggle (On)"})
+	else
+		self.editButton({index=gamesim_ui_buttons.verbose_toggle, label="Verbose Toggle (Off)"})
+	end
+end
+
+function admin_log()
+
+	readMonster()
+	readPlayers()
+
+	print( '  ' )
+
+	print( 'Monster' ..
+			' mov' .. gamesim_monster.movement ..
+			' spd' .. gamesim_monster.speed ..
+			' acc' .. gamesim_monster.accuracy ..
+			' dam' .. gamesim_monster.damage ..
+			' tough' .. gamesim_monster.toughness ..
+	 		' evas' .. gamesim_monster.evasion ..
+			' luck' .. gamesim_monster.luck )
+
+	print( 'P1 ' ..
+		' mov'  .. gamesim_players[1].movement ..
+		' spd'  .. gamesim_players[1].speed ..
+		' acc'  .. gamesim_players[1].accuracy ..
+		' str'  .. gamesim_players[1].strength ..
+		' luck' .. gamesim_players[1].luck ..
+		' eva'  .. gamesim_players[1].evasion )
+
+	print( 'P2 ' ..
+		' mov'  .. gamesim_players[2].movement ..
+		' spd'  .. gamesim_players[2].speed ..
+		' acc'  .. gamesim_players[2].accuracy ..
+		' str'  .. gamesim_players[2].strength ..
+		' luck' .. gamesim_players[2].luck ..
+		' eva'  .. gamesim_players[2].evasion )
+
+	print( 'P3 ' ..
+		' mov'  .. gamesim_players[3].movement ..
+		' spd'  .. gamesim_players[3].speed ..
+		' acc'  .. gamesim_players[3].accuracy ..
+		' str'  .. gamesim_players[3].strength ..
+		' luck' .. gamesim_players[3].luck ..
+		' eva'  .. gamesim_players[3].evasion )
+
+	print( 'P4 ' ..
+		' mov'  .. gamesim_players[4].movement ..
+		' spd'  .. gamesim_players[4].speed ..
+		' acc'  .. gamesim_players[4].accuracy ..
+		' str'  .. gamesim_players[4].strength ..
+		' luck' .. gamesim_players[4].luck ..
+		' eva'  .. gamesim_players[4].evasion )
+
+	print( 'P1 weapon: ' .. gamesim_players[1].selected_weapon_desc )
+	print( 'P2 weapon: ' .. gamesim_players[2].selected_weapon_desc )
+	print( 'P3 weapon: ' .. gamesim_players[3].selected_weapon_desc )
+	print( 'P4 weapon: ' .. gamesim_players[4].selected_weapon_desc )
+end
+
+function monster_knockdown()
+	local monster = get_monster();
+	if monster then
+		local pos = monster.getPosition()
+		local rotX = monster.getRotation().x
+		local rotY = monster.getRotation().y
+		local rotZ = monster.getRotation().z
+
+		if gamesim_state.monster_is_knocked_down then
+			-- stand up monster
+			if rotZ > 165 and rotZ < 195 then
+				monster.setRotationSmooth({rotX, rotY, 0}, false, false)
+				monster.setPositionSmooth({pos.x, 5, pos.z})
+				monster.setLock(false)
+				broadcastToAll("The Monster stood up")
+			end
+
+			self.editButton({index=gamesim_ui_buttons.monster_knockdown, label="Knockdown"})
+		else
+			-- knock down monster
+			self.editButton({index=gamesim_ui_buttons.monster_knockdown, label="Stand up"})
+
+			if rotZ > 165 and rotZ < 195 then
+				broadcastToAll("The Monster is already knocked down")
+				return
+			end
+
+			if rotZ < 65  or rotZ > 350 then
+				monster.setLock(true)
+				monster.setRotationSmooth({rotX, rotY, 180})
+				monster.setPositionSmooth({pos.x, 5, pos.z})
+				monster.setRotationSmooth({0, 180, 180}, false, true)
+				broadcastToAll("The Monster is knocked down")
+			end
+		end
+
+		--playerLookAt(playerColorClicked, monster.getPosition(), 30)
+		gamesim_state.monster_is_knocked_down = not gamesim_state.monster_is_knocked_down
+		return
+	end
+end
+
+function monster_speed_ai_minus()
+	local speed = get_monster_ai_speed() - 1
+	set_monster_speed(speed)
+end
+
+
+function monster_speed_ai_plus()
+	local speed = get_monster_ai_speed() + 1
+	set_monster_speed(speed)
+end
+
+function set_monster_speed(speed)
+	self.editButton({index=gamesim_ui_buttons.monster_speed, label=speed})
+	refresh_stats()
+end
+
+function get_monster_ai_speed()
+	local num = self.getButtons()[gamesim_ui_buttons.monster_speed + 1].label
+	return tonumber(num);
+end
+
+function monster_acc_ai_minus()
+	local acc = get_monster_ai_acc() - 1
+	set_monster_ai_acc(acc)
+end
+
+function monster_acc_ai_plus()
+	local acc = get_monster_ai_acc() + 1
+	set_monster_ai_acc(acc)
+end
+
+function get_monster_ai_acc()
+	if gamesim_ui_buttons then
+		local num = self.getButtons()[gamesim_ui_buttons.monster_acc + 1].label
+		return tonumber(num);
+	else
+		return 0
+	end
+end
+
+function set_monster_ai_acc(acc)
+	self.editButton({index=gamesim_ui_buttons.monster_acc, label=acc})
+	refresh_stats()
+end
+
+function player_move(playerIndex, playerColorClicked)
+	local playerName = "Player " .. playerIndex
+	move_camera_to_player(playerColorClicked, playerName)
+	player_hide_move_buttons(playerIndex)
+	forceSave()
+end
+
+function player_hide_wound_buttons()
+	local pos = self.getButtons()[gamesim_ui_buttons.roll_for_wound + 1].position
+	pos.y = -10.0
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound, position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.roll_for_wound_desc + 1].position
+	pos.y = -10.0
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound_desc, position=pos})
+end
+
+function player_show_wound_buttons()
+	local pos = self.getButtons()[gamesim_ui_buttons.roll_for_wound + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound, position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.roll_for_wound_desc + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound_desc, position=pos})
+end
+
+function player_hide_attack_buttons(playerIndex)
+	gamesim_state_hide_player_attack[playerIndex] = true
+
+	--local pos = self.getButtons()[gamesim_ui_buttons.to_hit_desc[playerIndex] + 1].position
+	--pos.y = -10.0
+	--self.editButton({index=gamesim_ui_buttons.to_hit_desc[playerIndex], position=pos})
+
+	--local pos = self.getButtons()[gamesim_ui_buttons.to_wound_desc[playerIndex] + 1].position
+	--pos.y = -10.0
+	--self.editButton({index=gamesim_ui_buttons.to_wound_desc[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_attack[playerIndex] + 1].position
+	pos.y = -10.0
+	self.editButton({index=gamesim_ui_buttons.player_attack[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_attack_blind[playerIndex] + 1].position
+	pos.y = -10.0
+	self.editButton({index=gamesim_ui_buttons.player_attack_blind[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_activation[playerIndex] + 1].position
+	pos.y = -10.0
+	self.editButton({index=gamesim_ui_buttons.player_activation[playerIndex], position=pos})
+end
+
+function player_hide_move_buttons(playerIndex)
+	gamesim_state_hide_player_move[playerIndex] = true
+	local pos = self.getButtons()[gamesim_ui_buttons.player_move[playerIndex] + 1].position
+	pos.y = -10
+	self.editButton({index=gamesim_ui_buttons.player_move[playerIndex], position=pos})
+end
+
+function player_reset_turn(playerIndex)
+	gamesim_state_hide_player_attack[playerIndex] = false
+	gamesim_state_hide_player_move[playerIndex] = false
+
+	local pos = self.getButtons()[gamesim_ui_buttons.to_hit_desc[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.to_hit_desc[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.to_wound_desc[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.to_wound_desc[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_attack[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.player_attack[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_attack_blind[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.player_attack_blind[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_activation[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.player_activation[playerIndex], position=pos})
+
+	local pos = self.getButtons()[gamesim_ui_buttons.player_move[playerIndex] + 1].position
+	pos.y = posY
+	self.editButton({index=gamesim_ui_buttons.player_move[playerIndex], position=pos})
+end
+
+function player_knockdown(playerIndex)
+	local playerName = "Player " .. playerIndex
+	local player = get_player(playerName)
+	if player then
+		local pos = player.getPosition()
+		local rotX = player.getRotation().x
+		local rotY = player.getRotation().y
+		local rotZ = player.getRotation().z
+
+		if gamesim_state.player_is_knocked_down[playerIndex] then
+			-- stand up monster
+			if rotZ > 165 and rotZ < 195 then
+				player.setRotationSmooth({rotX, rotY, 0}, false, false)
+				player.setPositionSmooth({pos.x, 5, pos.z})
+				player.setLock(false)
+				broadcastToAll("Player " .. playerIndex .. " stood up")
+			end
+
+			self.editButton({index=gamesim_ui_buttons.player_knockdown[playerIndex], label="Knockdown"})
+		else
+			-- knock down monster
+			self.editButton({index=gamesim_ui_buttons.player_knockdown[playerIndex], label="Stand up"})
+
+			if rotZ > 165 and rotZ < 195 then
+				broadcastToAll("Player " .. playerIndex .. " is already knocked down")
+				return
+			end
+
+			if rotZ < 65 or rotZ > 350 then
+				player.setLock(true)
+				player.setRotationSmooth({rotX, rotY, 180})
+				player.setPositionSmooth({pos.x, 5, pos.z})
+				player.setRotationSmooth({0, 180, 180}, false, true)
+				broadcastToAll("Player " .. playerIndex .. " is knocked down")
+			end
+		end
+
+		--playerLookAt(playerColorClicked, player.getPosition(), 25)
+		gamesim_state.player_is_knocked_down[playerIndex] = not gamesim_state.player_is_knocked_down[playerIndex]
+	end
+end
+
+function end_round()
+	player_reset_turn(1)
+	player_reset_turn(2)
+	player_reset_turn(3)
+	player_reset_turn(4)
+	player_hide_wound_buttons()
+	monster_reset_turn()
+end
+
+function print_monster_info()
+	print('Monster' ..
+			' mov' .. gamesim_monster.movement ..
+			' spd' .. gamesim_monster.speed ..
+			' acc' .. gamesim_monster.accuracy ..
+			' dam' .. gamesim_monster.damage ..
+			' tough' .. gamesim_monster.toughness ..
+			' evas' .. gamesim_monster.evasion ..
+			' luck' .. gamesim_monster.luck )
+end
+
+function print_player_info(playerIndex)
+	print( 'Player' ..
+		' mov'  .. gamesim_players[playerIndex].movement ..
+		' spd'  .. gamesim_players[playerIndex].speed ..
+		' acc'  .. gamesim_players[playerIndex].accuracy ..
+		' str'  .. gamesim_players[playerIndex].strength ..
+		' luck' .. gamesim_players[playerIndex].luck ..
+		' eva'  .. gamesim_players[playerIndex].evasion )
+end
+
+function print_player_weapon_info(playerWeapon)
+	print('Player weapon' ..
+		' spd' .. playerWeapon.speed ..
+		' acc' .. playerWeapon.acc ..
+		' str' .. playerWeapon.str ..
+		' lck' .. playerWeapon.luck
+		)
+end
+
+function print_monster_ai_info()
+	print( 'AI card' ..
+		' acc' .. get_monster_ai_acc() ..
+		' spd' .. get_monster_ai_speed())
+end
+
+function print_player_attack_desc_verbose(attackDesc, isBlind)
+	local blindString = ''
+	if isBlind then
+		blindString = '+1 '
+	end
+
+	print( "(Weapon speed + player speed)*d10 + player acc ".. blindString ..">= weapon acc + monster evasion" )
+	print( attackDesc.to_hit_verbose )
+	print( attackDesc.to_hit )
+
+	print( "Rolling 10 = perfect hit, and always hits" )
+	print( "If monster knocked down, hit on 3+ instead" )
+	print( "For each hit, draw wound location. If trap drawn, cancel attacks" )
+	print( "For each wound location, roll to wound" )
+	print( "1d10 + weapon str + player str >= monster toughness" )
+	print( attackDesc.to_wound_verbose )
+	print( 'Crit: (10 - player luck + monster luck).' )
+
+end
+
+function monster_attack(playerIndex)
+	readMonster()
+	readPlayers()
+
+	print(' ')
+	broadcastToAll('Monster attacking player ' .. playerIndex)
+	if gamesim_state.verbose_enabled then
+		print_monster_info()
+		print_monster_ai_info()
+		print_player_info(playerIndex)
+	end
+
+	local attackDesc = monster_attack_desc(playerIndex)
+
+	if gamesim_state.verbose_enabled then
+		print( 'Monster Speed * d10 + monster acc >= AI card acc + player evasion' )
+		print( attackDesc.to_hit_verbose )
+	end
+	broadcastToAll( attackDesc.to_hit )
+
+	local boardsTable = Global.getTable('boards')
+	local diceSpawnerGuid = boardsTable['spawnDiceOrange'].guid
+	if playerIndex == 1 then
+		diceSpawnerGuid = boardsTable['spawnDiceRed'].guid
+	elseif playerIndex == 2 then
+		diceSpawnerGuid = boardsTable['spawnDiceYellow'].guid
+	elseif playerIndex == 3 then
+		diceSpawnerGuid = boardsTable['spawnDiceGreen'].guid
+	elseif playerIndex == 4 then
+		diceSpawnerGuid = boardsTable['spawnDiceBlue'].guid
+	end
+	local diceSpawner = getObjectFromGUID(diceSpawnerGuid)
+	diceSpawner.call('spawnDice', {playerColor = "White", number = attackDesc.to_hit_num, valueNeeded = attackDesc.to_hit_value})
+
+	forceSave()
+end
+
+function read_weapon_stats(weaponDesc)
+	local regxEverythingExceptComma = '([^,]+)'
+	local playerWeapon = { speed = 0, acc = 0, str = 0, luck = 0 }
+
+	for x in string.gmatch(weaponDesc, regxEverythingExceptComma) do
+		if x:find("spd") then
+			playerWeapon.speed = tonumber(string.match (x, "%d+"))
+		end
+
+		if x:find("acc") then
+			playerWeapon.acc = tonumber(string.match(x, "%d+"))
+		end
+
+		if x:find("str") then
+			playerWeapon.str = tonumber(string.match(x, "%d+"))
+		end
+
+		if x:find("lck") then
+			playerWeapon.luck = tonumber(string.match(x, "%d+"))
+		end
+	end
+
+	return playerWeapon
+end
+
+function player_attack(playerIndex, isBlind)
+	readMonster()
+	readPlayers()
+
+	-- print( 'Player weapon: ' .. gamesim_players[playerIndex].selected_weapon_desc )
+
+	print(' ')
+	if isBlind then
+		broadcastToAll('Player ' .. playerIndex .. ' attacking monster from blind' )
+	else
+		broadcastToAll('Player ' .. playerIndex .. ' attacking monster' )
+	end
+
+	local playerWeapon = gamesim_players[playerIndex].selected_weapon_stats
+
+	if gamesim_state.verbose_enabled then
+		print_monster_info()
+		print_player_info(playerIndex)
+		print_player_weapon_info(gamesim_players[playerIndex].selected_weapon_stats)
+	end
+
+	local attackDesc = get_player_attack_desc(playerIndex, isBlind)
+
+	if gamesim_state.verbose_enabled then
+		print_player_attack_desc_verbose(attackDesc, isBlind)
+		--print( attackDesc.to_wound )
+	else
+		--print( attackDesc.to_hit )
+		--print( attackDesc.to_wound )
+	end
+	broadcastToAll("To hit: " .. attackDesc.to_hit)
+	broadcastToAll("To wound: " .. attackDesc.to_wound)
+	player_hide_attack_buttons(playerIndex)
+
+	gamesim_state.wound_value = attackDesc.to_wound_value
+	gamesim_state.wound_crit_value = attackDesc.to_wound_crit_value
+
+	local boardsTable = Global.getTable('boards')
+	local diceSpawnerGuid = boardsTable['spawnDiceOrange'].guid
+	local diceSpawner = getObjectFromGUID(diceSpawnerGuid)
+	diceSpawner.call('spawnDice',{playerColor = "White", number = attackDesc.to_hit_num, valueNeeded = attackDesc.to_hit_value})
+
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound, label="P" .. playerIndex .. " Roll to Wound"})
+	self.editButton({index=gamesim_ui_buttons.roll_for_wound_desc, label=attackDesc.to_wound})
+	player_show_wound_buttons()
+
+	forceSave()
+end
+
+function player_activation_1()
+	player_activation(1)
+end
+
+function player_activation_2()
+	player_activation(2)
+end
+
+function player_activation_3()
+	player_activation(3)
+end
+
+function player_activation_4()
+	player_activation(4)
+end
+
+function player_activation(playerIndex)
+	player_hide_attack_buttons(playerIndex)
+end
+
+
+function get_player_attack_desc(playerIndex, isBlind)
+	local attackDesc = {}
+
+	-- From page 74, survivor attack logic
+	local playerWeapon = gamesim_players[playerIndex].selected_weapon_stats
+	local numDice = playerWeapon.speed + gamesim_players[playerIndex].speed
+	local diceRollReq = get_monster_ai_acc() + gamesim_players[playerIndex].evasion
+	local neededRoll = playerWeapon.acc + gamesim_monster.evasion - gamesim_players[playerIndex].accuracy
+
+	local blindString = ''
+	if isBlind then
+		neededRoll = neededRoll - 1
+		blindString = '+1'
+	end
+
+	if neededRoll > 10 then neededRoll = 10 end
+	if neededRoll < 2 then neededRoll = 2 end
+	if gamesim_state.verbose_enabled then
+		attackDesc.to_hit_verbose = numDice .. ' x (1d10+' .. gamesim_players[playerIndex].accuracy .. blindString .. ' >= ' .. playerWeapon.acc .. '+' .. gamesim_monster.evasion .. ')'
+	end
+	attackDesc.to_hit = 'Hit: ' .. numDice .. ' x (1d10 >= ' .. neededRoll .. ')'
+	attackDesc.to_hit_num = numDice
+	attackDesc.to_hit_value = neededRoll
+
+	local neededWoundRoll = gamesim_monster.toughness - playerWeapon.str - gamesim_players[playerIndex].strength
+	if neededWoundRoll > 10 then neededWoundRoll = 10 end
+	if neededWoundRoll < 2 then neededWoundRoll = 2 end
+
+	local critRollNeeded = 10 - gamesim_players[playerIndex].luck - playerWeapon.luck + gamesim_monster.luck
+	if critRollNeeded > 10 then critRollNeeded = 10 end
+	if critRollNeeded < 2 then critRollNeeded = 2 end
+	if gamesim_state.verbose_enabled then
+		attackDesc.to_wound_verbose = '1d10+' .. playerWeapon.str .. '+' .. gamesim_players[playerIndex].strength .. ' >= ' .. gamesim_monster.toughness
+	end
+	attackDesc.to_wound = 'Wound: 1d10 >= ' .. neededWoundRoll .. '. Crit ' .. critRollNeeded .. '+'
+	attackDesc.to_wound_value = neededWoundRoll
+	attackDesc.to_wound_crit_value = critRollNeeded
+
+	return attackDesc
+end
+
+function monster_attack_desc(playerIndex)
+	-- page 70:
+	-- Monster attack:
+	-- Monster rolls (AI card Speed + attack profile speed) * d10 to attack
+	-- (Attack roll result + monster accuracy mod) must be equal or higher than (attack profile accuracy + survivor's evasion mod)
+	-- For each hit, roll hit location.  (AI card damage + attack profile damage) is number of wounds for each hit
+
+	local numDice =  get_monster_ai_speed() + gamesim_monster.speed
+	local diceRollReq = get_monster_ai_acc() + gamesim_players[playerIndex].evasion
+	local rollNeeded = get_monster_ai_acc() + gamesim_players[playerIndex].evasion - gamesim_monster.accuracy
+	if rollNeeded > 10 then rollNeeded = 10 end
+	if rollNeeded < 2 then rollNeeded = 2 end
+
+	local attackDesc = {}
+	if gamesim_state.verbose_enabled then
+		attackDesc.to_hit_verbose = numDice .. ' x (1d10+' .. gamesim_monster.accuracy .. ' >= ' .. get_monster_ai_acc() .. '+' .. gamesim_players[playerIndex].evasion .. ')'
+	end
+	attackDesc.to_hit = numDice .. ' x (1d10 >= ' .. rollNeeded .. ')'
+	attackDesc.to_hit_num = numDice
+	attackDesc.to_hit_value = rollNeeded
+
+	return attackDesc
+end
+
+function refresh_stats()
+	readMonster()
+	readPlayers()
+	for iPlayer=1, 4 do
+		local attackDesc = get_player_attack_desc(iPlayer, false)
+		self.editButton({index=gamesim_ui_buttons.to_hit_desc[iPlayer], label=attackDesc.to_hit})
+		self.editButton({index=gamesim_ui_buttons.to_wound_desc[iPlayer], label=attackDesc.to_wound})
+
+		local monAttackDesc = monster_attack_desc(iPlayer)
+		self.editButton({index=gamesim_ui_buttons.monster_to_hit_desc[iPlayer], label=monAttackDesc.to_hit})
+	end
+
+	forceSave()
+end
+
+function onObjectDrop( player_color,  dropped_object)
+	--print('onObjectDrop')
+	startLuaCoroutine(self, 'delayedRefreshStats')
+end
+
+function delayedRefreshStats()
+	for i = 1, 50 do
+		coroutine.yield(0)
+	end
+	--print('refresh_stats')
+	refresh_stats()
+	return 1
+end
+
+function playerLookAt(player_color, position, distance)
+	local parameters = {}
+	parameters.position = position
+	parameters.yaw = 0
+	parameters.pitch = 60
+	parameters.distance = distance
+	if( player_color != nil ) then
+		Player[player_color].lookAt(parameters)
+	end
+end
+
+function get_monster()
+	local zonesTable = Global.getTable('zones')
+	if zonesTable then
+		local zoneShowdownGuid = zonesTable['zoneShowdown'].guid
+		local zoneShowdown = getObjectFromGUID(zoneShowdownGuid)
+		--print('zoneShowdownGuid ' .. zoneShowdownGuid)
+		if zoneShowdown then
+			for _, object in ipairs(zoneShowdown.getObjects()) do
+				local desc = object.getDescription()
+				if string.find(desc, "monster") and string.find(desc, "figurine") then
+					return object
+				end
+			end
+		end
+	end
+
+	return nil
+end
+
+function monster_move(object, playerColorClicked)
+	local monster = get_monster();
+	if monster then
+		playerLookAt(playerColorClicked, monster.getPosition(), 30)
+		return
+	end
+
+	print('No monster on showdown board')
+end
+
+function move_camera_to_P1_card(object, playerColorClicked)
+	playerLookAt(playerColorClicked, {-30.70, 4.77, -25.0}, 15)
+end
+
+function move_camera_to_P2_card(object, playerColorClicked)
+	playerLookAt(playerColorClicked, {-17.93, 4.76, -25.0}, 15)
+end
+
+function move_camera_to_P3_card(object, playerColorClicked)
+	playerLookAt(playerColorClicked, {16.10, 4.81, -25.0}, 15)
+end
+
+function move_camera_to_P4_card(object, playerColorClicked)
+	playerLookAt(playerColorClicked, {30.80, 4.81, -25.0}, 15)
+end
+
+function move_camera_to_home(playerColorClicked)
+	playerLookAt(playerColorClicked, {0.0, 4.29, -20.0}, 20)
+end
+
+function get_player(playerName)
+	local zonesTable = Global.getTable('zones')
+	if zonesTable then
+		local zoneShowdownGuid = zonesTable['zoneShowdown'].guid
+		--print('zoneShowdownGuid ' .. zoneShowdownGuid)
+		local zoneShowdown = getObjectFromGUID(zoneShowdownGuid)
+		if zoneShowdown then
+			for _, object in ipairs(zoneShowdown.getObjects()) do
+				if object.getName() == playerName then
+					return object;
+				end
+			end
+		end
+	end
+
+	return nil;
+end
+
+function move_camera_to_player(playerColorClicked, playerName)
+	local player = get_player(playerName)
+	if player then
+		playerLookAt(playerColorClicked, player.getPosition(), 25)
+	end
+end
+
+function dictionary(state)
+    local sortedState = {}
+    for key,val in pairs(state) do
+        table.insert(sortedState, {key=key, val=val})
+    end
+    table.sort(sortedState, function(e1, e2) return (e1.key < e2.key) end)
+    local dict = {}
+    for _,v in ipairs(sortedState) do
+        table.insert(dict, v.key)
+    end
+    return dict
+end
+
+function dataToSave()
+	local data_to_save = {}
+	data_to_save.gamesim_state = gamesim_state
+	data_to_save.gamesim_state_hide_player_attack = gamesim_state_hide_player_attack
+	data_to_save.gamesim_state_hide_player_move = gamesim_state_hide_player_move
+
+	return data_to_save
+end
+
+function compressState(state, dict)
+    local save = {}
+    for _,key in ipairs(dict) do
+        table.insert(save, state[key])
+    end
+    return JSON.encode(save)
+end
+
+function decompressState(compressedState, dict)
+    local state = {}
+    local stateTable = JSON.decode(compressedState)
+    for k,v in ipairs(stateTable) do
+        state[dict[k]] = v
+    end
+    return state
+end
+
+function forceSave()
+	local data_to_save = dataToSave()
+	dataDict = dictionary(data_to_save)
+	self.script_state = compressState(data_to_save, dataDict)
+end
+
+function roll_to_wound()
+	local boardsTable = Global.getTable('boards')
+	local diceSpawnerGuid = boardsTable['spawnDiceOrange'].guid
+	local diceSpawner = getObjectFromGUID(diceSpawnerGuid)
+	diceSpawner.call('spawnDice',{playerColor = "White", number = 1, valueNeeded = gamesim_state.wound_value, critValueNeeded=gamesim_state.wound_crit_value})
+end
+
+function draw_ai_deck()
+	--local obj = getObjectFromGUID('9ef878')
+	--local pos = obj.getPosition()
+	--print('pos ' .. pos.x .. ','.. pos.y .. ',' .. pos.z)
+
+	local pos = {x=-3.13,y=1.86,z=-15.83}
+	local hitList = Physics.cast({origin = {pos.x, pos.y + 1, pos.z}, direction = {0, -1, 0}, type = 1, debug=false})
+	local aiDeck = nil
+	local aiCard = nil
+	local foundDeck = false
+	local foundCard = false
+
+	for _, entry in ipairs(hitList) do
+		--print( 'entry.hit_object.tag ' .. entry.hit_object.name );
+		if entry.hit_object.tag == "Deck" then
+			foundDeck = true
+			aiDeck = entry.hit_object
+		end
+		if entry.hit_object.tag == "Card" then
+			foundCard = true
+			aiCard = entry.hit_object
+		end
+	end
+
+	if foundDeck then
+		local aiCard = aiDeck.takeObject({position = {-14.23, 3.35, -16.73}, rotation = {35, 180, 0}, top = true, callback = "lockCard", callback_owner = Global})
+	else
+		if foundCard then
+			aiCard.setLock(true)
+		 	aiCard.highlightOn({0.856, 0.1, 0.094}, 60)
+			aiCard.setPositionSmooth({-14.23, 3.35, -16.73})
+			aiCard.setRotationSmooth({35, 180, 0})
+		else
+			broadcastToAll("Reshuffle the AI Deck First", {1,1,1})
+		end
+	end
+end
+
+function do_discard_ai()
+	local pos = {x=-14.23,y=3.35,z=-16.73}
+	local hitList = Physics.cast({origin = {pos.x, pos.y + 1, pos.z}, direction = {0, -1, 0}, type = 1, debug=false})
+
+	for _, entry in ipairs(hitList) do
+		--print('entry.hit_object.tag ' .. entry.hit_object.tag)
+		if entry.hit_object.tag == "Card" and entry.hit_object.getLock() then
+			entry.hit_object.setLock(false)
+			entry.hit_object.setPositionSmooth({-0.7, 2.86, -15.83}, false, false)
+			entry.hit_object.setRotationSmooth({0, 180, 0, false, true})
+			entry.hit_object.highlightOff()
+		end
+	end
+end
+
+function do_play_ai()
+	local pos = {x=-14.23,y=3.35,z=-16.73}
+	local hitList = Physics.cast({origin = {pos.x, pos.y + 1, pos.z}, direction = {0, -1, 0}, type = 1, debug=false})
+
+	for _, entry in ipairs(hitList) do
+		--print('entry.hit_object.tag ' .. entry.hit_object.tag)
+		if entry.hit_object.tag == "Card" and entry.hit_object.getLock() then
+			entry.hit_object.setLock(false)
+			entry.hit_object.setRotationSmooth({0, 180, 0, false, true})
+			entry.hit_object.highlightOff()
+		end
+	end
+end
+
+function monster_draw_ai()
+	draw_ai_deck()
+	gamesim_state.hide_draw_ai = true
+	gamesim_state.hide_discard_ai = false
+	update_monster_buttons()
+end
+
+function monster_discard_ai()
+	gamesim_state.hide_draw_ai = true
+	gamesim_state.hide_discard_ai = true
+	update_monster_buttons()
+	do_discard_ai()
+end
+
+function monster_play_ai()
+	gamesim_state.hide_draw_ai = true
+	gamesim_state.hide_discard_ai = true
+	update_monster_buttons()
+	do_play_ai();
+end
+
+function monster_reset_turn()
+	gamesim_state.hide_draw_ai = false
+	gamesim_state.hide_discard_ai = true
+	update_monster_buttons()
+	do_play_ai()
+end
+
+function update_monster_buttons()
+	if gamesim_state.hide_draw_ai then
+		local pos = self.getButtons()[gamesim_ui_buttons.draw_ai + 1].position
+		pos.y = -10.0
+		self.editButton({index=gamesim_ui_buttons.draw_ai, position=pos})
+	else
+		local pos = self.getButtons()[gamesim_ui_buttons.draw_ai + 1].position
+		pos.y = posY
+		self.editButton({index=gamesim_ui_buttons.draw_ai, position=pos})
+
+		gamesim_state.hide_discard_ai = true
+	end
+
+	if gamesim_state.hide_discard_ai then
+		local pos = self.getButtons()[gamesim_ui_buttons.discard_ai + 1].position
+		pos.y = -10.0
+		self.editButton({index=gamesim_ui_buttons.discard_ai, position=pos})
+
+		pos = self.getButtons()[gamesim_ui_buttons.play_ai + 1].position
+		pos.y = -10.0
+		self.editButton({index=gamesim_ui_buttons.play_ai, position=pos})
+	else
+		local pos = self.getButtons()[gamesim_ui_buttons.discard_ai + 1].position
+		pos.y = posY
+		self.editButton({index=gamesim_ui_buttons.discard_ai, position=pos})
+
+		pos = self.getButtons()[gamesim_ui_buttons.play_ai + 1].position
+		pos.y = posY
+		self.editButton({index=gamesim_ui_buttons.play_ai, position=pos})
+	end
+end

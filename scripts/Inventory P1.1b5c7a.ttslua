@@ -97,13 +97,8 @@ function forceSave()
 	if isFullyLoaded == true then
 		local data_to_save = dataToSave()
 		-- Create the dictionary if non-existent
-		if not dataDict then
-			dataDict = dictionary(data_to_save)
-		end
+		dataDict = dictionary(data_to_save)
 		self.script_state = compressState(data_to_save, dataDict)
-		-- Return compressed
-		return compressState(data_to_save, dataDict)
-	else
 	end
 end
 
@@ -126,8 +121,7 @@ isFullyLoaded = false
 
 
 --Loads
-function onload(saved_data)
-	saved_data = ''
+function onLoad(saved_data)
     original_rot = {['x'] = 0,['y'] = 180,['z'] = 0}
     initButtonsTable()
     objs = {}
@@ -149,9 +143,8 @@ function onload(saved_data)
 	    --loads saved data if exists
     if saved_data != '' then
 		-- Create the dictionary if non-existent
-		if not dataDict then
-			dataDict = dictionary(dataToSave())
-		end
+		dataDict = dictionary(dataToSave())
+
 		-- Load and decompress
         local loaded_data = decompressState(saved_data, dataDict)
 		armor = loaded_data.armor
@@ -163,8 +156,8 @@ function onload(saved_data)
 		if FullCharSheetGUID != '' then
 			FullCharSheet = getObjectFromGUID(FullCharSheetGUID)
 		end
-        buttons.counts = loaded_data
-        for i,v in pairs(buttons) do
+        buttons.counts = loaded_data.saved_counts
+        for i,v in pairs(buttons.counts) do
             if tostring(i) != 'index' and tostring(i) != 'counts' and tostring(i) != 'params'  and tostring(i) != 'targetFunc' then
                 if buttons.counts[tostring(i)] == nil then
                     buttons.counts[tostring(i)] = 0
@@ -313,6 +306,9 @@ function updateDisplay(firstTime)
 			end
 		end
 		forceSave()
+	end
+	if firstTime == false then
+		Global.call('refresh_gamesim_stats');
 	end
 end
 

@@ -51,7 +51,17 @@ boards = {
 	boardMonster = {guid = '463cb7'},
 	boardStoryL = {guid = 'e1212a'},
 	boardStoryR = {guid = '40ac46'},
-	boardStoryT = {guid = ' f6e69b'}
+	boardStoryT = {guid = ' f6e69b'},
+	player1FullCharSheet = {guid = '1b5c7a', zone='a5d893', gridZone='7f821f'},
+	player2FullCharSheet = {guid = 'fd8b97', zone='c3160e', gridZone='4b5512'},
+	player3FullCharSheet = {guid = '86e4fd', zone='088fdf', gridZone='ecc724'},
+	player4FullCharSheet = {guid = 'f7c730', zone='e05f5a', gridZone='a5a41d'},
+	gameSim = {guid = 'b583ef'},
+	spawnDiceRed = {guid = '08c670'},
+	spawnDiceYellow = {guid = '56c580'},
+	spawnDiceGreen = {guid = 'eda0a0'},
+	spawnDiceBlue = {guid = '53cf34'},
+	spawnDiceOrange = {guid = '41f410'}
 }
 
 staticObjs = {
@@ -249,7 +259,7 @@ zones = {
 	zoneAll = {guid =''},
 	--general areas
 	zoneMain = {guid = 'a68a72'},
-	zoneShowdown = {'63aa2f'},
+	zoneShowdown = {guid = '63aa2f'},
 	zoneHunt = {guid = '7300c1'},
 	zoneMonsterBoard = {guid = '4759fe'},
 	zoneSettlement = {guid = '7c6c54'},
@@ -668,12 +678,12 @@ function toggleGameBox()
 end
 
 function unlockGameBox()
-	gameBox.interactable = true
+	--gameBox.interactable = true
 	interactBox = true
 end
 
 function lockGameBox()
-	gameBox.interactable = false
+	--gameBox.interactable = false
 	interactBox = false
 end
 
@@ -2174,4 +2184,60 @@ function cleanupShowdownCoroutine()
 	printToAll(messages.msgShowdownCleared,rgbNarrator)
 	showdownCleaning = false
 	return 1
+end
+
+function getCharSheet(params)
+	--print('charSheetName ' .. params.charSheetName)
+	local playerCharSheet = boards[params.charSheetName];
+	if playerCharSheet then
+		--print('playerCharSheet ' .. playerCharSheet.guid)
+		local playerGuid = playerCharSheet.guid
+		local playerZoneID = playerCharSheet.zone
+		local pStation = getObjectFromGUID(playerGuid)
+		if pStation then
+			--print('pStation ' .. pStation.guid)
+			local charSheet = pStation.getVar('FullCharSheet')
+			if charSheet != '' then
+				return charSheet
+			else
+				local zone = getObjectFromGUID(playerZoneID)
+				local objs = zone.getObjects()
+				for k, v in pairs(objs) do
+					if v.getVar('tempStats') ~= nil then
+						--print('found ' .. v.guid)
+						return v
+					end
+				end
+				--print('not found')
+				return nil
+			end
+		end
+	end
+end
+
+function refresh_gamesim_stats()
+	startLuaCoroutine(self, 'delayed_refresh_gamesim_stats')
+end
+
+function delayed_refresh_gamesim_stats()
+	for i = 1, 50 do
+		coroutine.yield(0)
+	end
+	local boardsTable = Global.getTable('boards')
+	if boardsTable then
+		local gameSimGuid = boardsTable['gameSim'].guid
+		if gameSimGuid then
+			local gameSim = getObjectFromGUID(gameSimGuid)
+			if gameSim then
+				--print("calling gameSim.call('refresh_stats')")
+				gameSim.call('refresh_stats')
+			end
+		end
+	end
+	return 1
+end
+
+function lockCard(obj)
+	obj.setLock(true)
+ 	obj.highlightOn({0.856, 0.1, 0.094}, 60)
 end

@@ -14,7 +14,7 @@ function initCustomButtons()
 	createCounter('spd', 'big', dx, dy); dx = dx + px;
 	createCounter('acc', 'big', dx, dy); dx = dx + px;
 	createCounter('dmg', 'big', dx, dy); dx = dx + px + px + px;
-	
+
 	createCounter('tgh', 'big', dx, dy); dx = dx + px;
 	createCounter('evs', 'big', dx, dy); dx = dx + px;
 	createCounter('lck', 'big', dx, dy); dx = dx + px;
@@ -254,6 +254,9 @@ function updateDisplay(firstTime)
         end
     end
 	forceSave()
+	if firstTime == false then
+		Global.call('refresh_gamesim_stats');
+	end
 end
 
 ---------------------------------------------

@@ -314,6 +314,9 @@ function updateDisplay(firstTime)
 		end
 		forceSave()
 	end
+	if firstTime == false then
+		Global.call('refresh_gamesim_stats');
+	end
 end
 
 --------------------------------------------

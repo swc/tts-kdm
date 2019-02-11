@@ -32,4 +32,3 @@ function onDropped()
 		staticGridObj.call('kill',{})
 	end
 end
-

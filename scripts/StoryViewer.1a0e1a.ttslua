@@ -1,0 +1,844 @@
+--KDM 2 page Storybook
+
+---------------------------------
+--Vars
+--------------------------------
+local manualsIndex = {
+	tab0 = {
+		tabName = 'Intro',
+		bookName = 'Intro',
+		pages = {
+			{pageName = 'Introduction', stateNum = 1},
+			{pageName = 'Comic', stateNum = 14},
+		}
+	},
+	tab1 = {
+		tabName = 'Rules',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'First Story', stateNum = 2},
+			{pageName = 'Survival Guide', stateNum = 8},
+			{pageName = 'Survivors', stateNum = 11},
+			{pageName = 'Monsters', stateNum = 15},
+			{pageName = 'Resources', stateNum = 19},
+			{pageName = 'Terrain', stateNum = 20},
+			{pageName = 'Hunt Phase', stateNum = 21},
+			{pageName = 'Showdown Phase', stateNum = 23},
+			{pageName = 'Settlement Phase', stateNum = 31},
+			{pageName = 'Game Variants', stateNum = 91},
+			{pageName = 'Glossary', stateNum = 92},
+		}
+	},
+	tab2 = {
+		tabName = 'Timeline Events',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Returning Survivors', stateNum = 72},
+			{pageName = 'Endless Screams', stateNum = 50},
+			{pageName = 'Bone Witch', stateNum = 47},
+			{pageName = 'Hands of Heat', stateNum = 52},
+			{pageName = 'Armored Strangers', stateNum = 44},
+			{pageName = 'Phoenix Feather', stateNum = 66},
+			{pageName = 'Regal Visit', stateNum = 71},
+			{pageName = 'Principle: Conviction', stateNum = 67},
+			{pageName = 'Watched', stateNum = 85},
+			{pageName = 'Blackout', stateNum = 88},
+			{pageName = 'Lantern Research', stateNum = 60},
+		}
+	},
+	tab3 = {
+		tabName = 'Hunt Events',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Hunt Event: 1 - 11', stateNum = 35},
+			{pageName = 'Hunt Event: 12 - 25', stateNum = 36},
+			{pageName = 'Hunt Event: 26 - 38', stateNum = 37},
+			{pageName = 'Hunt Event: 39 - 53', stateNum = 38},
+			{pageName = 'Hunt Event: 54 - 69', stateNum = 39},
+			{pageName = 'Hunt Event: 70 - 79', stateNum = 40},
+			{pageName = 'Hunt Event: 80 - 94', stateNum = 41},
+			{pageName = 'Hunt Event: 95 - 100', stateNum = 42},
+		}
+	},
+	tab4 = {
+		tabName = 'Showdown Setups',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'White Lion', stateNum = 80},
+			{pageName = 'Screaming Antelope', stateNum = 79},
+			{pageName = 'Phoenix', stateNum = 78},
+			{pageName = 'Butcher', stateNum = 75},
+			{pageName = "King's Man", stateNum = 77},
+			{pageName = 'The Hand', stateNum = 76},
+			{pageName = 'Watcher', stateNum = 86},
+			{pageName = 'Gold Smoke Knight', stateNum = 89},
+			{pageName = 'Legendary Monsters', stateNum = 62},
+		}
+	},
+	tab5 = {
+		tabName = 'Triggered Events',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Intimacy', stateNum = 57},
+			{pageName = 'Birth of a Savior', stateNum = 45},
+					{pageName = 'Cooking', stateNum = 48},
+			{pageName = 'White Speaker', stateNum = 82},
+			{pageName = 'W. Speaker w/ Wares', stateNum = 83},
+			{pageName = 'Oxidation', stateNum = 65},
+			{pageName = 'Overwhelming Darkness', stateNum = 64},
+			{pageName = 'Mineral Gathering', stateNum = 63},
+			{pageName = 'Herb Gathering', stateNum = 53},
+			{pageName = 'Run Away', stateNum = 73},
+		}
+	},
+	tab6 = {
+		tabName = 'Milestone Events',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Age', stateNum = 43},
+			{pageName = 'Bold', stateNum = 46},
+			{pageName = 'Insight', stateNum = 56},
+			{pageName = 'See the Truth', stateNum = 74},
+			{pageName = 'White Secret', stateNum = 81},
+			{pageName = 'Principle: Death', stateNum = 68},
+			{pageName = 'Principle: New Life', stateNum = 69},
+			{pageName = 'Principle: Society', stateNum = 70},
+			{pageName = 'Hooded Knight', stateNum = 54},
+			{pageName = 'H. Knight w/ Twilight', stateNum = 55},
+			{pageName = 'Game Over', stateNum = 51},
+		}
+	},
+	tab7 = {
+		tabName = 'Severe Injuries',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Head, Arms', stateNum = 33},
+			{pageName = 'Body, Waist, Legs', stateNum = 33},
+			{pageName = 'Brain Trauma', stateNum = 34},
+		}
+	},
+	tab8 = {
+		tabName = 'Monster Events',
+		bookName = 'Rules',
+		pages = {
+			{pageName = 'Zero Presence', stateNum = 84},
+			{pageName = 'Crush and Devour', stateNum = 49},
+			{pageName = 'Legendary Lungs', stateNum = 61},
+			{pageName = "King's Step", stateNum = 59},
+			{pageName = "King's Curse", stateNum = 58},
+			{pageName = 'Hammer and Nail', stateNum = 90},
+			{pageName = 'Inscrutable Purpose', stateNum = 87},
+		}
+	},
+	tab9 = {
+		tabName = 'Dung Beetle Knight',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 31},
+			{pageName = 'Rumbling in the Dark', stateNum = 33},
+			{pageName = 'Showdown: Dung Beetle Knight', stateNum = 36},
+			{pageName = 'Spelunking of Death', stateNum = 37},
+			{pageName = 'Underground Sow', stateNum = 38},
+			{pageName = 'Black Harvest', stateNum = 39},
+			{pageName = 'Secret Meeting', stateNum = 40},
+		}
+	},
+	tab10 = {
+		tabName = 'Gorm',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 1},
+			{pageName = 'The Approaching Storm', stateNum = 2},
+			{pageName = 'Fetid Grotto', stateNum = 3},
+			{pageName = 'Final March', stateNum = 4},
+			{pageName = 'Showdown: Gorm', stateNum = 5},
+			{pageName = 'Melting Horror', stateNum = 6},
+		}
+	},
+	tab11 = {
+		tabName = 'Lonely Tree',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 71},
+			{pageName = 'The Lonely Lady', stateNum = 72},
+			{pageName = 'Showdown: Lonely Tree', stateNum = 76},
+		}
+	},
+	tab12 = {
+		tabName = 'Dragon King',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 17},
+			{pageName = 'Glowing Crater', stateNum = 19},
+			{pageName = 'Showdown: Dragon King', stateNum = 20},
+			{pageName = 'Meltdown', stateNum = 21},
+			{pageName = 'Foundlings', stateNum = 22},
+			{pageName = 'Intimacy', stateNum = 23},
+			{pageName = "Midnight's Children", stateNum = 24},
+			{pageName = 'Awake', stateNum = 25},
+			{pageName = 'Unveil the Sky', stateNum = 26},
+			{pageName = 'Faces in the Sky', stateNum = 27},
+			{pageName = 'The Tomb', stateNum = 28},
+			{pageName = 'Showdown: The Tyrant', stateNum = 29},
+			{pageName = 'Death of the King', stateNum = 30},
+		}
+	},
+	tab13 = {
+		tabName = 'Flower Knight',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 41},
+			{pageName = "A Crone's Tale", stateNum = 43},
+			{pageName = 'Showdown: Flower Knight', stateNum = 46},
+			{pageName = 'The Forest Wants What It Wants', stateNum = 47},
+			{pageName = 'Breakthrough', stateNum = 48},
+			{pageName = 'Sense Memory', stateNum = 49},
+			{pageName = 'A Warm Virus', stateNum = 50},
+			{pageName = 'Necrotoxic Mistletoe', stateNum = 51},
+		}
+	},
+	tab14 = {
+		tabName = 'Spidicules',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 7},
+			{pageName = 'Young Rivals', stateNum = 9},
+			{pageName = 'Showdown: Spidicules', stateNum = 11},
+			{pageName = 'The Forest Wants What It Wants', stateNum = 12},
+			{pageName = 'Spidisisyphus', stateNum = 13},
+			{pageName = "Puppet's Embalming", stateNum = 14},
+			{pageName = 'Silk Surgery', stateNum = 15},
+			{pageName = 'Taken', stateNum = 16},
+		}
+	},
+	tab15 = {
+		tabName = 'Manhunter',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 77},
+			{pageName = 'The Hanged Man', stateNum = 78},
+			{pageName = 'Showdown: Manhunter', stateNum = 81},
+			{pageName = 'Lottery', stateNum = 82},
+			{pageName = 'Death Pit', stateNum = 83},
+			{pageName = 'Sonorous Rest', stateNum = 84},
+			{pageName = 'Bleeding Heart', stateNum = 85},
+			{pageName = 'Tools of War', stateNum = 86},
+		}
+	},
+	tab16 = {
+		tabName = 'Sunstalker',
+		bookName = 'Expansions 2',
+		pages = {
+			{pageName = 'Rules', stateNum = 1},
+			{pageName = 'Promise Under the Sun', stateNum = 3},
+			{pageName = 'Showdown: Sunstalker', stateNum = 5},
+			{pageName = 'Conquer Your Shadow', stateNum = 6},
+			{pageName = 'Sky Fishing', stateNum = 7},
+			{pageName = 'The Pool and the Sun', stateNum = 8},
+			{pageName = 'Intimacy', stateNum = 9},
+			{pageName = 'Sun Dipping', stateNum = 10},
+			{pageName = 'The Great Sky Gift', stateNum = 11},
+			{pageName = 'Birth of Color', stateNum = 12},
+			{pageName = 'Final Gift', stateNum = 13},
+			{pageName = 'Umbilical Symbiosis', stateNum = 14},
+			{pageName = 'Edged Tonometry', stateNum = 15},
+			{pageName = 'Warriors of the Sun', stateNum = 16},
+			{pageName = 'The Great Devourer', stateNum = 17},
+		}
+	},
+	tab17 = {
+		tabName = 'Lion Knight',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 61},
+			{pageName = 'An Uninvited Guest', stateNum = 63},
+			{pageName = 'Places, Everyone!', stateNum = 64},
+			{pageName = 'Showdown: Lion Knight', stateNum = 65},
+			{pageName = 'Intermission', stateNum = 66},
+			{pageName = 'Strange Caravan', stateNum = 67},
+			{pageName = 'Finale', stateNum = 68},
+		}
+	},
+	tab18 = {
+		tabName = 'Lion God',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 52},
+			{pageName = 'The Silver City', stateNum = 53},
+			{pageName = 'Showdown: Lion God', stateNum = 56},
+			{pageName = 'Necropolis', stateNum = 57},
+			{pageName = 'The Knowledge Worm', stateNum = 58},
+			{pageName = 'A Gracious Host', stateNum = 59},
+			{pageName = 'Death Reading', stateNum = 60},
+		}
+	},
+	tab19 = {
+		tabName = 'Slenderman',
+		bookName = 'Expansions 1',
+		pages = {
+			{pageName = 'Rules', stateNum = 87},
+			{pageName = "It's Already Here", stateNum = 88},
+			{pageName = 'Showdown: Slenderman', stateNum = 91},
+			{pageName = 'Dark Place', stateNum = 92},
+			{pageName = 'Light-Forging', stateNum = 93},
+			{pageName = 'Forgotten Fear', stateNum = 94},
+		}
+	},
+	tab20 = {
+		tabName = 'Black Lion',
+		bookName = 'Expansions 2',
+		pages = {
+			{pageName = 'Rules', stateNum = 18},
+			{pageName = "FAQ", stateNum = 19},
+		}
+	},
+}
+
+local manualBoxGUID = 'c22b95'
+local zoneSelfGuidCache = nil
+local zoneSelfGuidCacheSpawned = false
+
+local activeBookTabName = {}
+local activeBookLabelLeft = {}
+local activeBookLabelRight = {}
+local changingBook = false
+local currentPage = 1
+local changeToTab = {}
+
+local cloneSpawnPos = {-100,100,-100}
+
+---------------------------------
+--Init
+--------------------------------
+
+
+function onLoad()
+	initTabButtons()
+	initBrowseButtons()
+end
+
+function initTabButtons()
+	local index = manualsIndex
+	local col = 6
+	local row = 5
+	local total = col * row
+	local endOfRow = {}
+	local num = {}
+	for i = 1, total do
+		num = i*col
+		table.insert(endOfRow, num)
+	end
+	local dx = ( 34 / col / 2 ) - 12 + 2
+	local dy = 10.5
+	local w = (17000 / col) - (col * 25)
+	local px = 34/ col
+	local py = -1.25
+	local i = 1
+	local h = 600
+	local f = 350
+	for k,v in pairs(index) do
+		local func = k
+		local label = v.tabName
+		self.createButton({
+			click_function = func,
+			function_owner = self,
+			label = label,
+			position = {dy,0.14,dx},
+			rotation = {0,90,0},
+			width = w,
+			height = h,
+			font_size = f
+		})
+		local nextRow = false
+		for j, l in pairs(endOfRow) do
+			if i == l then
+				nextRow = true
+			end
+		end
+		if nextRow == false then
+			dx = dx + px
+		elseif nextRow == true then
+			dx = dx - (px*(col-1))
+			dy = dy + py
+		end
+		i = i+1
+	end
+end
+
+function initBrowseButtons()
+	local posX = -10.5
+	local posY = 8.5
+	self.createButton({
+		click_function = 'nextPage',
+		function_owner = self,
+		label = '>',
+		position = {posX,0.14,posY},
+		rotation = {0,90,0},
+		width = 1400,
+		height = 600,
+		font_size = 350
+	})
+	self.createButton({
+		click_function = 'previousPage',
+		function_owner = self,
+		label = '<',
+		position = {posX,0.14,posY-3.0},
+		rotation = {0,90,0},
+		width = 1400,
+		height = 600,
+		font_size = 350
+	})
+end
+
+
+---------------------------------
+--Events
+--------------------------------
+
+function createZone()
+	if zoneSelfGuidCache ~= nil then
+		local zoneSelf = getObjectFromGUID(zoneSelfGuidCache)
+		if zoneSelf == nil then
+			zoneSelfGuidCache = nil
+			zoneSelfGuidCacheSpawned = false
+		end
+	end
+
+	if zoneSelfGuidCacheSpawned == false then
+		zoneSelfGuidCacheSpawned = true
+		local obj = spawnObject(
+		{
+			type = 'ScriptingTrigger',
+			position = {self.getPosition().x+3, self.getPosition().y, self.getPosition().z},
+			scale = {x=20, y=3, z=10},
+			callback_function = function(obj)
+				 zoneSelfGuidCache = obj.guid
+				 --print('zoneSelfGuidCache ' .. zoneSelfGuidCache)
+			 end
+		})
+	end
+
+	return zoneSelfGuidCache
+end
+
+---------------------------------
+--Button fnc
+--------------------------------
+
+function nextPage()
+	local zoneSelfGuid = createZone()
+	local pageChanged = false
+	if zoneSelfGuid ~= nil then
+		local zoneSelf = getObjectFromGUID(zoneSelfGuid)
+		local objects = zoneSelf.getObjects()
+		for k,v in pairs(objects) do
+			if string.find(v.getDescription(), 'manual') then
+				local obj = v.setState(currentPage + 1)
+				if obj ~= nil then
+					pageChanged = true
+				end
+			end
+		end
+	end
+
+	if pageChanged then
+		currentPage = currentPage + 1
+	end
+end
+
+function previousPage()
+	local zoneSelfGuid = createZone()
+	local pageChanged = false
+	if zoneSelfGuid ~= nil then
+		local zoneSelf = getObjectFromGUID(zoneSelfGuid)
+		local objects = zoneSelf.getObjects()
+		for k,v in pairs(objects) do
+			if string.find(v.getDescription(), 'manual') then
+				if currentPage ~= 1 then
+					local obj = v.setState(currentPage - 1)
+					if obj ~= nil then
+						pageChanged = true
+					end
+				end
+			end
+		end
+	end
+
+	if pageChanged then
+		if bookLeft ~= nil then
+			bookLeft.setState(currentPage - 2)
+		end
+		if bookRight ~= nil then
+			bookRight.setState(currentPage - 2)
+		end
+		currentPage = currentPage - 1
+	end
+end
+
+function tab0()
+	local tab = 'tab0'
+	tabClick(tab)
+end
+
+function tab1()
+	local tab = 'tab1'
+	tabClick(tab)
+end
+
+function tab2()
+	local tab = 'tab2'
+	tabClick(tab)
+end
+
+function tab3()
+	local tab = 'tab3'
+	tabClick(tab)
+end
+
+function tab4()
+	local tab = 'tab4'
+	tabClick(tab)
+end
+
+function tab5()
+	local tab = 'tab5'
+	tabClick(tab)
+end
+
+function tab6()
+	local tab = 'tab6'
+	tabClick(tab)
+end
+
+function tab7()
+	local tab = 'tab7'
+	tabClick(tab)
+end
+
+function tab8()
+	local tab = 'tab8'
+	tabClick(tab)
+end
+
+function tab9()
+	local tab = 'tab9'
+	tabClick(tab)
+end
+
+function tab10()
+	local tab = 'tab10'
+	tabClick(tab)
+end
+
+function tab11()
+	local tab = 'tab11'
+	tabClick(tab)
+end
+
+function tab12()
+	local tab = 'tab12'
+	tabClick(tab)
+end
+
+function tab13()
+	local tab = 'tab13'
+	tabClick(tab)
+end
+
+function tab14()
+	local tab = 'tab14'
+	tabClick(tab)
+end
+
+function tab15()
+	local tab = 'tab15'
+	tabClick(tab)
+end
+
+function tab16()
+	local tab = 'tab16'
+	tabClick(tab)
+end
+
+function tab17()
+	local tab = 'tab17'
+	tabClick(tab)
+end
+
+function tab18()
+	local tab = 'tab18'
+	tabClick(tab)
+end
+
+function tab19()
+	local tab = 'tab19'
+	tabClick(tab)
+end
+
+function tab20()
+	local tab = 'tab20'
+	tabClick(tab)
+end
+
+---------pages
+
+function page1()
+	local page = 1
+	pageClick(page)
+end
+
+function page2()
+	local page = 2
+	pageClick(page)
+end
+
+function page3()
+	local page = 3
+	pageClick(page)
+end
+
+function page4()
+	local page = 4
+	pageClick(page)
+end
+
+function page5()
+	local page = 5
+	pageClick(page)
+end
+
+function page6()
+	local page = 6
+	pageClick(page)
+end
+
+function page7()
+	local page = 7
+	pageClick(page)
+end
+
+function page8()
+	local page = 8
+	pageClick(page)
+end
+
+function page9()
+	local page = 9
+	pageClick(page)
+end
+
+function page10()
+	local page = 10
+	pageClick(page)
+end
+
+function page11()
+	local page = 11
+	pageClick(page)
+end
+
+function page12()
+	local page = 12
+	pageClick(page)
+end
+
+function page13()
+	local page = 13
+	pageClick(page)
+end
+
+function page14()
+	local page = 14
+	pageClick(page)
+end
+
+function page15()
+	local page = 15
+	pageClick(page)
+end
+
+function page16()
+	local page = 16
+	pageClick(page)
+end
+
+----------------------------------------
+--primary fcns
+---------------------------------------
+
+function tabClick(tab)
+	--clear last tab pages
+	local btns = self.getButtons()
+	for k,v in pairs(btns) do
+		local text = v.click_function
+		if string.find(text, 'page') then
+			local index = v.index
+			self.removeButton(index)
+		end
+	end
+	--clear books
+	changeBook(tab)
+end
+
+function tabClickChangeUI(tab)
+	--create page list
+	local pagesTable = manualsIndex[tab].pages
+	local col = 1
+	local row = #pagesTable
+	local dx = 23.5
+	local dy = 2.75
+	local w = 2900
+	local px = 24/ col
+	local py = -0.95
+	local i = 1
+	local h = 400
+	local f = 300
+	local btn = {}
+	pageBtns = {}
+	for k,v in pairs(pagesTable) do
+		local func = 'page' .. i
+		local label = v.pageName
+		local btn = self.createButton({
+			click_function = func,
+			function_owner = self,
+			label = label,
+			position = {dy,0.14,dx},
+			rotation = {0,90,0},
+			width = w,
+			height = h,
+			font_size = f
+		})
+		dy = dy + py
+		i = i+1
+	end
+end
+
+function changeBook(tab)
+	if changingBook == false then
+		changingBook = true
+		changeToTab = tab
+		activeBookTabName = manualsIndex[tab].tabName
+		activeBookLabelLeft = manualsIndex[tab].bookName .. ' Left Pages'
+		activeBookLabelRight = manualsIndex[tab].bookName .. ' Right Pages'
+		--print('activeBookTabName ' .. activeBookTabName)
+		startLuaCoroutine(self, 'changeBookCoroutine')
+	end
+end
+
+function spawnBook(posXDelta2, posYDelta2, posZDelta2)
+	local bookLeftGuid = nil;
+	local bookRightGuid = nil;
+	local manualBox = getObjectFromGUID(manualBoxGUID)
+	local cloneBox = manualBox.clone({position = {-100, 100, 100}})
+	coroutine.yield(0)
+	cloneBox.lock()
+	cloneBox.setScale({0,0,0})
+	objects = cloneBox.getObjects()
+	for k,v in pairs(objects) do
+		if v.name == activeBookLabelLeft then
+			bookLeftGuid = v.guid
+		end
+		if v.name == activeBookLabelRight then
+			bookRightGuid = v.guid
+		end
+	end
+	--spawn
+	local posXDelta = 10.0
+	local posZDelta = -1.0
+
+	if bookLeftGuid ~= nil then
+		local params = {}
+		params.guid = bookLeftGuid
+		local pos = self.getPosition()
+		params.position = {posXDelta+pos[1]-2-10+posXDelta2,pos[2] + 2+posYDelta2,posZDelta+pos[3]-0.2+posZDelta2}
+		local rot = self.getRotation()
+		params.rotation = {rot[1], rot[2] + 90, rot[3]}
+		params.smooth = false
+		bookLeft = cloneBox.takeObject(params)
+		currentPage = 1
+		coroutine.yield(0)
+	end
+	if bookRightGuid ~= nil then
+		local params = {}
+		params.guid = bookRightGuid
+		local pos = self.getPosition()
+		params.position = {posXDelta+pos[1]-2-1.355+posXDelta2, pos[2] + 2+posYDelta2,posZDelta+pos[3]-0.2+posZDelta2}
+		local rot = self.getRotation()
+		params.rotation = {rot[1], rot[2] + 90, rot[3]}
+		params.smooth = false
+		bookRight = cloneBox.takeObject(params)
+		currentPage = 1
+		coroutine.yield(0)
+	end
+	cloneBox.destruct()
+end
+
+function changeBookCoroutine()
+	local alreadyExists = false
+	--clear old books
+	local zoneSelfGuid = createZone()
+	if zoneSelfGuid ~= nil then
+		local zoneSelf = getObjectFromGUID(zoneSelfGuid)
+		local objects = zoneSelf.getObjects()
+		for k,v in pairs(objects) do
+			if string.find(v.getDescription(), 'manual') then
+				if v.getName() ~= activeBookLabelLeft and
+				   v.getName() ~= activeBookLabelRight then
+					v.destruct()
+				else
+					alreadyExists = true
+				end
+			end
+		end
+	end
+
+	--spawn new one
+	if alreadyExists == false then
+		spawnBook(0.0, 0.0, 0.0)
+		Wait.frames(function()
+			changingBook = false
+			tabClickChangeUI(changeToTab)
+		end, 120)
+	else
+		changingBook = false
+		tabClickChangeUI(changeToTab)
+	end
+	return 1
+end
+
+function pageClick(pageNum)
+	--print("page num " .. pageNum)
+	local zoneSelfGuid = createZone()
+	if zoneSelfGuid == nil then
+		return
+	end
+	local zoneSelf = getObjectFromGUID(zoneSelfGuid)
+	local objects = zoneSelf.getObjects()
+	local tabTable = {}
+	if activeBookTabName ~= nil then
+		local foundTable = false
+		for k,v in pairs(manualsIndex) do
+			if string.find(v.tabName, activeBookTabName) then
+				tabTable = v
+				foundTable = true
+			end
+		end
+		if foundTable then
+			local state = tabTable.pages[pageNum].stateNum
+			--print('state: ' .. tabTable.tabName .. ',' .. state .. '. activeBookTabName: ' .. activeBookTabName)
+			for k,v in pairs(objects) do
+				if string.find(v.getName(), activeBookLabelLeft) and string.find(v.getDescription(), 'manual') then
+					v.setState(state)
+					currentPage = state
+				end
+
+				if string.find(v.getName(), activeBookLabelRight) and string.find(v.getDescription(), 'manual') then
+					v.setState(state)
+					currentPage = state
+				end
+			end
+		else
+			print('Book not found: ' .. activeBookLabel)
+		end
+	end
+end

@@ -21,7 +21,7 @@ function overlay(params)
 			label = '+',
 			width = 750*scaleArea,
 			height = 750*scaleArea,
-			color = {pColor[1], pColor[2], pColor[3], 0.4},
+			color = {pColor[1], pColor[2], pColor[3], 0.5},
 			position = {0,0,0},
 			font_size = 300,
 			font_color = {0,0,0,1}

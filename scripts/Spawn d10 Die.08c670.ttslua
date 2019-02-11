@@ -26,7 +26,7 @@ setting.maxCount = 10
 --Delay (seconds) after a click that the roll is done (0.5 or more)
 setting.rollDelay = 1.2
 --Time before dice are cleaned up (0 is instant, -1 won't clean them)
-setting.cleanupDelay = -1
+setting.cleanupDelay = 10
 
 --If it dyes the die the color of the player clicking (true or false)
 setting.colorDie = false
@@ -44,6 +44,8 @@ setting.print.playerColor = true
 --Any roller clicked by the same color player will be treated as the same
 setting.coop = false
 
+setting.tintForValue = false
+setting.valueNeeded = 5
 
 
 --Edit beyond this point only if you have accepted Lua into your heart, amen
@@ -85,7 +87,17 @@ end
 
 --Spawn dice for rolling
 
+function spawnDice(params)
+	playerColor = params.playerColor
+	number = params.number
+	setting.tintForValue = true
+ 	setting.valueNeeded = params.valueNeeded
 
+	print('spawnDice ' .. number)
+	for i=1, number do
+		click_roll(nil, playerColor)
+	end
+end
 
 function click_roll(_, color)
     --Dice spam protection check
@@ -205,6 +217,17 @@ function finalizeRoll(p)
     rollingHasStopped = nil --Used for coop communication
     rollInProgress = false --Used for button lockout
     updateGlobalTable(nil)
+
+	if setting.tintForValue then
+		for _, die in ipairs(spawnedDice) do
+	        if die ~= nil then
+				if die.getRotationValue() < setting.valueNeeded then
+					die.setColorTint({0.3,0.3,0.3})
+				end
+	        end
+	    end
+		setting.tintForValue = false
+	end
 
     --Auto die removal
     if setting.cleanupDelay > -1 then

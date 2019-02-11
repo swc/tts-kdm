@@ -11,7 +11,7 @@ function onPickedUp()
 	local gPos = self.getPosition()
 	if gPos[1] > -19 and gPos[1] < 19 then
 		if gPos[3] > -14 and gPos[3] < 14 then
-			local pColor = {0.7,0.7,0.7}
+			local pColor = {1.0,0.0,0.0}
 			if monsterBoard then
 				local table = monsterBoard.getTable('buttons')
 				local range = table.mov.display.label
@@ -25,9 +25,21 @@ function onPickedUp()
 	end
 end
 
+function round(num, numDecimalPlaces)
+    local mult = 10^(numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
 function onDropped()
 	if staticGridObj then
 		staticGridObj.call('kill',{})
 	end
+
+    local pos = self.getPosition()
+    print('old x,z ' .. pos.x .. ',' .. pos.z )
+    pos.x = round(pos.x / 1.59, 0) * 1.59
+    pos.z = round(pos.z / 1.59, 0) * 1.59
+    print('x,z ' .. pos.x .. ',' .. pos.z )
+    self.setPositionSmooth(pos, false, true)
 end
 

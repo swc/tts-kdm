@@ -1,0 +1,542 @@
+--KDM Character Sheets (Vanilla)
+--created by Eskander
+
+-----------
+--Editable things
+-----------
+
+--------non local references
+toggleSquareFill = '\u{25A0}'
+toggleCircleFill = '\u{25CF}'
+
+
+-------BUTTON/INPUTS CREATION
+
+function setupButtons()
+
+	------STYLES
+	--all button default style params
+	local buttonsInfo = {
+		color = {1,1,1,0},
+		font_color = {0,0,0,255},
+		alignment = 2,
+		function_owner = self
+	}
+
+	--style sheet
+	local buttonsStyle = {
+		textName = {
+			font_size = 350,
+			width = 4000,
+			height = 500,
+			value = 'Unnamed Settlement',
+		},
+		textLineLg = {
+			font_size = 130,
+			width = 4500,
+			height = 220,
+			value = '',
+		},
+		textLineSm = {
+			font_size = 130,
+			width = 3000,
+			height = 220,
+			value = '',
+		},
+		textLineSm2 = {
+			font_size = 130,
+			width = 2400,
+			height = 220,
+			value = '',
+		},
+		textLineSm3 = {
+			font_size = 130,
+			width = 1800,
+			height = 220,
+			value = '',
+		},
+		toggleSquare = {
+			font_size = 200,
+			width = 150,
+			height = 150,
+			label = '\u{25A0}',
+		},
+		toggleSquareLg = {
+			font_size = 200,
+			width = 300,
+			height = 300,
+			label = '\u{25A0}',
+		},
+		counter = {
+			font_size = 800,
+			width = 0,
+			height = 0,
+			label = '0',
+			adjBtn = {
+				font_size = 250,
+				width = 500,
+				height = 600,
+				offsetX = 0.65,
+				offsetY = 0,
+			}
+		},
+	}
+	
+	----------CUSTOM OFFSETS FOR BUTTON LIST POS
+	local pyYR = 0.542
+	local dxYRTXSM = -1
+	local pxDeath = 0.31
+	local pyM = 0.576
+	local pyQ = 0.542
+	
+	----------CUSTOM BUTTON LIST
+	--indexRef = {indexName, type, dx, dy, style}
+	local statsList = {
+		{name = 'settlementName', type = 'text', posX = -2, posY = -11.8, style = 'textName'},
+		{name = 'year01', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*0), style = 'toggleSquareLg'},
+		{name = 'year02', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*1) , style = 'toggleSquareLg'},
+		{name = 'year03', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*2) , style = 'toggleSquareLg'},
+		{name = 'year04', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*3) , style = 'toggleSquareLg'},
+		{name = 'year05', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*4) , style = 'toggleSquareLg'},
+		{name = 'year06', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*5) , style = 'toggleSquareLg'},
+		{name = 'year07', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*6) , style = 'toggleSquareLg'},
+		{name = 'year08', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*7) , style = 'toggleSquareLg'},
+		{name = 'year09', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*8) , style = 'toggleSquareLg'},
+		{name = 'year10', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*9) , style = 'toggleSquareLg'},
+		{name = 'year11', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*10) , style = 'toggleSquareLg'},
+		{name = 'year12', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*11) , style = 'toggleSquareLg'},
+		{name = 'year13', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*12) , style = 'toggleSquareLg'},
+		{name = 'year14', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*13) , style = 'toggleSquareLg'},
+		{name = 'year15', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*14) , style = 'toggleSquareLg'},
+		{name = 'year16', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*15) , style = 'toggleSquareLg'},
+		{name = 'year17', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*16) , style = 'toggleSquareLg'},
+		{name = 'year18', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*17) , style = 'toggleSquareLg'},
+		{name = 'year19', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*18) , style = 'toggleSquareLg'},
+		{name = 'year20', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*19) , style = 'toggleSquareLg'},
+		{name = 'year21', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*20) , style = 'toggleSquareLg'},
+		{name = 'year22', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*21) , style = 'toggleSquareLg'},
+		{name = 'year23', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*22) , style = 'toggleSquareLg'},
+		{name = 'year24', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*23) , style = 'toggleSquareLg'},
+		{name = 'year25', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*24) , style = 'toggleSquareLg'},
+		{name = 'year26', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*25) , style = 'toggleSquareLg'},
+		{name = 'year27', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*26) , style = 'toggleSquareLg'},
+		{name = 'year28', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*27) , style = 'toggleSquareLg'},
+		{name = 'year29', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*28) , style = 'toggleSquareLg'},
+		{name = 'year30', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*29) , style = 'toggleSquareLg'},
+		{name = 'year31', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*30) , style = 'toggleSquareLg'},
+		{name = 'year32', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*31) , style = 'toggleSquareLg'},
+		{name = 'year33', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*32) , style = 'toggleSquareLg'},
+		{name = 'year34', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*33) , style = 'toggleSquareLg'},
+		{name = 'year35', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*34) , style = 'toggleSquareLg'},
+		{name = 'year36', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*35) , style = 'toggleSquareLg'},
+		{name = 'year37', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*36) , style = 'toggleSquareLg'},
+		{name = 'year38', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*37) , style = 'toggleSquareLg'},
+		{name = 'year39', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*38) , style = 'toggleSquareLg'},
+		{name = 'year40', type = 'toggle', posX = -8.32, posY  = -9.58 + (pyYR*39) , style = 'toggleSquareLg'},
+		
+		{name = 'year01TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*0), style = 'textLineSm'},
+		{name = 'year02TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*1) , style = 'textLineSm'},
+		{name = 'year03TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*2) , style = 'textLineLg'},
+		{name = 'year04TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*3) , style = 'textLineSm'},
+		{name = 'year05TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*4) , style = 'textLineSm'},
+		{name = 'year06TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*5) , style = 'textLineSm'},
+		{name = 'year07TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*6) , style = 'textLineSm'},
+		{name = 'year08TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*7) , style = 'textLineLg'},
+		{name = 'year09TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*8) , style = 'textLineSm'},
+		{name = 'year10TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*9) , style = 'textLineLg'},
+		{name = 'year11TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*10) , style = 'textLineSm'},
+		{name = 'year12TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*11) , style = 'textLineSm'},
+		{name = 'year13TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*12) , style = 'textLineLg'},
+		{name = 'year14TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*13) , style = 'textLineLg'},
+		{name = 'year15TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*14) , style = 'textLineLg'},
+		{name = 'year16TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*15) , style = 'textLineSm'},
+		{name = 'year17TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*16) , style = 'textLineLg'},
+		{name = 'year18TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*17) , style = 'textLineLg'},
+		{name = 'year19TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*18) , style = 'textLineSm'},
+		{name = 'year20TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*19) , style = 'textLineSm'},
+		{name = 'year21TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*20) , style = 'textLineLg'},
+		{name = 'year22TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*21) , style = 'textLineSm'},
+		{name = 'year23TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*22) , style = 'textLineSm'},
+		{name = 'year24TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*23) , style = 'textLineLg'},
+		{name = 'year25TX', type = 'text', posX = dxYRTXSM, posY  = -9.48 + (pyYR*24) , style = 'textLineSm'},
+		{name = 'year26TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*25) , style = 'textLineLg'},
+		{name = 'year27TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*26) , style = 'textLineLg'},
+		{name = 'year28TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*27) , style = 'textLineLg'},
+		{name = 'year29TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*28) , style = 'textLineLg'},
+		{name = 'year30TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*29) , style = 'textLineLg'},
+		{name = 'year31TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*30) , style = 'textLineLg'},
+		{name = 'year32TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*31) , style = 'textLineLg'},
+		{name = 'year33TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*32) , style = 'textLineLg'},
+		{name = 'year34TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*33) , style = 'textLineLg'},
+		{name = 'year35TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*34) , style = 'textLineLg'},
+		{name = 'year36TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*35) , style = 'textLineLg'},
+		{name = 'year37TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*36) , style = 'textLineLg'},
+		{name = 'year38TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*37) , style = 'textLineLg'},
+		{name = 'year39TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*38) , style = 'textLineLg'},
+		{name = 'year40TX', type = 'text', posX = -3, posY  = -9.48 + (pyYR*39) , style = 'textLineLg'},
+		
+		{name = 'survivalLimit', type = 'counter', posX = 4.08, posY  = -9.58, style = 'counter'},
+		{name = 'population', type = 'counter', posX = 4.08 + 3.1, posY  = -9.58, style = 'counter'},
+		
+		{name = 'death01', type = 'toggle', posX = 2.68 + (pxDeath*0), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death02', type = 'toggle', posX = 2.68 + (pxDeath*1), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death03', type = 'toggle', posX = 2.68 + (pxDeath*2), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death04', type = 'toggle', posX = 2.68 + (pxDeath*3), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death05', type = 'toggle', posX = 2.68 + (pxDeath*4), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death06', type = 'toggle', posX = 2.68 + (pxDeath*5), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death07', type = 'toggle', posX = 2.68 + (pxDeath*6), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death08', type = 'toggle', posX = 2.68 + (pxDeath*7), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death09', type = 'toggle', posX = 2.68 + (pxDeath*8), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death10', type = 'toggle', posX = 2.68 + (pxDeath*9), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death11', type = 'toggle', posX = 2.68 + (pxDeath*10), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death12', type = 'toggle', posX = 2.68 + (pxDeath*11), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death13', type = 'toggle', posX = 2.68 + (pxDeath*12), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death14', type = 'toggle', posX = 2.68 + (pxDeath*13), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death15', type = 'toggle', posX = 2.68 + (pxDeath*14), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death16', type = 'toggle', posX = 2.68 + (pxDeath*15), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death17', type = 'toggle', posX = 2.68 + (pxDeath*16), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death18', type = 'toggle', posX = 2.68 + (pxDeath*17), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death19', type = 'toggle', posX = 2.68 + (pxDeath*18), posY  = -8.1, style = 'toggleSquare'},
+		{name = 'death20', type = 'toggle', posX = 2.68 + (pxDeath*0), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death21', type = 'toggle', posX = 2.68 + (pxDeath*1), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death22', type = 'toggle', posX = 2.68 + (pxDeath*2), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death23', type = 'toggle', posX = 2.68 + (pxDeath*3), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death24', type = 'toggle', posX = 2.68 + (pxDeath*4), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death25', type = 'toggle', posX = 2.68 + (pxDeath*5), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death26', type = 'toggle', posX = 2.68 + (pxDeath*6), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death27', type = 'toggle', posX = 2.68 + (pxDeath*7), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death28', type = 'toggle', posX = 2.68 + (pxDeath*8), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death29', type = 'toggle', posX = 2.68 + (pxDeath*9), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death30', type = 'toggle', posX = 2.68 + (pxDeath*10), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death31', type = 'toggle', posX = 2.68 + (pxDeath*11), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death32', type = 'toggle', posX = 2.68 + (pxDeath*12), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death33', type = 'toggle', posX = 2.68 + (pxDeath*13), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death34', type = 'toggle', posX = 2.68 + (pxDeath*14), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death35', type = 'toggle', posX = 2.68 + (pxDeath*15), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death36', type = 'toggle', posX = 2.68 + (pxDeath*16), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death37', type = 'toggle', posX = 2.68 + (pxDeath*17), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		{name = 'death38', type = 'toggle', posX = 2.68 + (pxDeath*18), posY  = -8.1 + 0.31, style = 'toggleSquare'},
+		
+		{name = 'lost01', type = 'toggle', posX = 2.68 + (pxDeath*0), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost02', type = 'toggle', posX = 2.68 + (pxDeath*1), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost03', type = 'toggle', posX = 2.68 + (pxDeath*2), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost04', type = 'toggle', posX = 2.68 + (pxDeath*3), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost05', type = 'toggle', posX = 2.68 + (pxDeath*4), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost06', type = 'toggle', posX = 2.68 + (pxDeath*5), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost07', type = 'toggle', posX = 2.68 + (pxDeath*6), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost08', type = 'toggle', posX = 2.68 + (pxDeath*7), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost09', type = 'toggle', posX = 2.68 + (pxDeath*8), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost10', type = 'toggle', posX = 2.68 + (pxDeath*9), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost11', type = 'toggle', posX = 2.68 + (pxDeath*10), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost12', type = 'toggle', posX = 2.68 + (pxDeath*11), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost13', type = 'toggle', posX = 2.68 + (pxDeath*12), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost14', type = 'toggle', posX = 2.68 + (pxDeath*13), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost15', type = 'toggle', posX = 2.68 + (pxDeath*14), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost16', type = 'toggle', posX = 2.68 + (pxDeath*15), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost17', type = 'toggle', posX = 2.68 + (pxDeath*16), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost18', type = 'toggle', posX = 2.68 + (pxDeath*17), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost19', type = 'toggle', posX = 2.68 + (pxDeath*18), posY  = -6.71, style = 'toggleSquare'},
+		{name = 'lost20', type = 'toggle', posX = 2.68 + (pxDeath*19), posY  = -6.71, style = 'toggleSquare'},
+		
+		{name = 'milestone01', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*0), style = 'toggleSquare'},
+		{name = 'milestone02', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*1) , style = 'toggleSquare'},
+		{name = 'milestone03', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*2) , style = 'toggleSquare'},
+		{name = 'milestone04', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*3) , style = 'toggleSquare'},
+		{name = 'milestone05', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*4) , style = 'toggleSquare'},
+		{name = 'milestone06', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*5) , style = 'toggleSquare'},
+		{name = 'milestone07', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*6) , style = 'toggleSquare'},
+		{name = 'milestone08', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*7) , style = 'toggleSquare'},
+		{name = 'milestone09', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*8) , style = 'toggleSquare'},
+		{name = 'milestone10', type = 'toggle', posX = 2.82, posY  = -4.56 + (pyM*9) , style = 'toggleSquare'},
+		
+		{name = 'quarry01', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*0), style = 'toggleSquare'},
+		{name = 'quarry02', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*1) , style = 'toggleSquare'},
+		{name = 'quarry03', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*2) , style = 'toggleSquare'},
+		{name = 'quarry04', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*3) , style = 'toggleSquare'},
+		{name = 'quarry05', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*4) , style = 'toggleSquare'},
+		{name = 'quarry06', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*5) , style = 'toggleSquare'},
+		{name = 'quarry07', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*6) , style = 'toggleSquare'},
+		{name = 'quarry08', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*7) , style = 'toggleSquare'},
+		{name = 'quarry09', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*8) , style = 'toggleSquare'},
+		{name = 'quarry10', type = 'toggle', posX = 2.82, posY  = 2.5 + (pyQ*9) , style = 'toggleSquare'},
+		
+		{name = 'nemesis01', type = 'toggle', posX = 2.82, posY  = 9.38 + (pyQ*0), style = 'toggleSquare'},
+		{name = 'nemesis02', type = 'toggle', posX = 2.82, posY  = 9.38 + (pyQ*1) , style = 'toggleSquare'},
+		{name = 'nemesis03', type = 'toggle', posX = 2.82, posY  = 9.38 + (pyQ*2) , style = 'toggleSquare'},
+		{name = 'nemesis04', type = 'toggle', posX = 2.82, posY  = 9.38 + (pyQ*3) , style = 'toggleSquare'},
+		{name = 'nemesis05', type = 'toggle', posX = 2.82, posY  = 9.38 + (pyQ*4) , style = 'toggleSquare'},
+		
+		{name = 'nemesis01L1', type = 'toggle', posX = 7.38, posY  = 9.38 + (pyQ*0), style = 'toggleSquare'},
+		{name = 'nemesis02L1', type = 'toggle', posX = 7.38, posY  = 9.38 + (pyQ*1) , style = 'toggleSquare'},
+		{name = 'nemesis03L1', type = 'toggle', posX = 7.38, posY  = 9.38 + (pyQ*2) , style = 'toggleSquare'},
+		{name = 'nemesis04L1', type = 'toggle', posX = 7.38, posY  = 9.38 + (pyQ*3) , style = 'toggleSquare'},
+		{name = 'nemesis05L1', type = 'toggle', posX = 7.38, posY  = 9.38 + (pyQ*4) , style = 'toggleSquare'},
+		
+		{name = 'nemesis01L2', type = 'toggle', posX = 7.38+0.51, posY  = 9.38 + (pyQ*0), style = 'toggleSquare'},
+		{name = 'nemesis02L2', type = 'toggle', posX = 7.38+0.51, posY  = 9.38 + (pyQ*1) , style = 'toggleSquare'},
+		{name = 'nemesis03L2', type = 'toggle', posX = 7.38+0.51, posY  = 9.38 + (pyQ*2) , style = 'toggleSquare'},
+		{name = 'nemesis04L2', type = 'toggle', posX = 7.38+0.51, posY  = 9.38 + (pyQ*3) , style = 'toggleSquare'},
+		{name = 'nemesis05L2', type = 'toggle', posX = 7.38+0.51, posY  = 9.38 + (pyQ*4) , style = 'toggleSquare'},
+		
+		{name = 'nemesis01L3', type = 'toggle', posX = 7.38+0.51+0.51, posY  = 9.38 + (pyQ*0), style = 'toggleSquare'},
+		{name = 'nemesis02L3', type = 'toggle', posX = 7.38+0.51+0.51, posY  = 9.38 + (pyQ*1) , style = 'toggleSquare'},
+		{name = 'nemesis03L3', type = 'toggle', posX = 7.38+0.51+0.51, posY  = 9.38 + (pyQ*2) , style = 'toggleSquare'},
+		{name = 'nemesis04L3', type = 'toggle', posX = 7.38+0.51+0.51, posY  = 9.38 + (pyQ*3) , style = 'toggleSquare'},
+		{name = 'nemesis05L3', type = 'toggle', posX = 7.38+0.51+0.51, posY  = 9.38 + (pyQ*4) , style = 'toggleSquare'},
+		
+		{name = 'quarry01TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*0), style = 'textLineSm2'},
+		{name = 'quarry02TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*1) , style = 'textLineSm2'},
+		{name = 'quarry03TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*2) , style = 'textLineSm2'},
+		{name = 'quarry04TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*3) , style = 'textLineSm2'},
+		{name = 'quarry05TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*4) , style = 'textLineSm2'},
+		{name = 'quarry06TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*5) , style = 'textLineSm2'},
+		{name = 'quarry07TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*6) , style = 'textLineSm2'},
+		{name = 'quarry08TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*7) , style = 'textLineSm2'},
+		{name = 'quarry09TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*8) , style = 'textLineSm2'},
+		{name = 'quarry10TX', type = 'text', posX = 5.6, posY  = 2.6 + (pyQ*9) , style = 'textLineSm2'},
+		
+		{name = 'nemesis01TX', type = 'text', posX = 4.9, posY  = 9.4 + (pyQ*0), style = 'textLineSm3'},
+		{name = 'nemesis02TX', type = 'text', posX = 4.9, posY  = 9.4 + (pyQ*1) , style = 'textLineSm3'},
+		{name = 'nemesis03TX', type = 'text', posX = 4.9, posY  = 9.4 + (pyQ*2) , style = 'textLineSm3'},
+		{name = 'nemesis04TX', type = 'text', posX = 4.9, posY  = 9.4 + (pyQ*3) , style = 'textLineSm3'},
+		{name = 'nemesis05TX', type = 'text', posX = 4.9, posY  = 9.4 + (pyQ*4) , style = 'textLineSm3'},
+	
+	}
+	--------height of buttons from surface
+	local height = 0.14
+	
+	-------CUSTOM BUTTON GENERATION
+	local inputParams = {}
+	local counterAdjParams = {}
+	local inputIndex = -1
+	local buttonIndex = -1
+	--reads custom buttons/inputs, preferences, styles, and generates the inputs/buttons, also indexes on perm. master list
+	for i, v in ipairs(statsList) do
+		--set params from all buttons
+		inputParams = buttonsInfo
+		--get for specific style
+		for var, val in pairs(buttonsStyle[v.style]) do
+			inputParams[var] = val
+		end
+		--setposition
+		inputParams.position = {v.posX,height,v.posY}
+		--specify by type
+		local indexName = v.name
+		if v.type == 'text' then
+			indexName = 'tx_' .. indexName
+			self.setVar(indexName .. 'Input', function () input(indexName) end)
+			inputParams.input_function = indexName .. 'Input'
+			if v.label then
+				inputParams.label = v.label
+			end
+			self.createInput(inputParams)
+			inputIndex = inputIndex + 1
+			statData[indexName] = {}
+			statData[indexName].index = inputIndex
+			statData[indexName].value = inputParams.value
+		elseif v.type == 'toggle' then
+			if v.style == 'toggleSquare' or v.style == 'toggleSquareLg' then
+				indexName = 'ts_' .. indexName
+			elseif v.style == 'toggleCircle' then
+				indexName = 'tc_' .. indexName
+			end
+			inputParams.label = ''
+			self.setVar(indexName .. 'Toggle', function () toggle(indexName) end)
+			inputParams.click_function = indexName .. 'Toggle'
+			self.createButton(inputParams)
+			statData[indexName] = {}
+			statData[indexName].value = 0
+			buttonIndex = buttonIndex + 1
+			statData[indexName].index = buttonIndex
+		elseif v.type == 'counter' then
+			indexName = 'ct_' .. indexName
+			inputParams.click_function = 'dud'
+			counterAdjParams = inputParams.adjBtn
+			inputParams.adjBtn = nil
+			self.createButton(inputParams)
+			statData[indexName] = {}
+			statData[indexName].value = 0
+			buttonIndex = buttonIndex + 1
+			statData[indexName].index = buttonIndex
+			
+			--create +/- offset
+			for var, val in pairs (counterAdjParams) do
+				inputParams[var] = val
+			end
+			inputParams.offsetX = nil
+			inputParams.offsetY = nil
+			--create plus
+			inputParams.label = '+'
+			self.setVar(indexName .. 'Plus', function () plus(indexName) end)
+			inputParams.click_function = indexName .. 'Plus'
+			local pos = inputParams.position
+			inputParams.position = {inputParams.position[1] + counterAdjParams.offsetX, inputParams.position[2], inputParams.position[3] + counterAdjParams.offsetY}
+			inputParams.alignment = 4
+			self.createButton(inputParams)
+			buttonIndex = buttonIndex + 1
+			--create minus
+			inputParams.label = '-'
+			self.setVar(indexName .. 'Minus', function () minus(indexName) end)
+			inputParams.click_function = indexName .. 'Minus'
+			inputParams.position = {pos[1] - counterAdjParams.offsetX, pos[2], pos[3] + counterAdjParams.offsetY}
+			inputParams.alignment = 2
+			self.createButton(inputParams)
+			buttonIndex = buttonIndex + 1
+		end
+		
+		--set manual index
+		statData[indexName].entryIndex = i
+	end
+end
+
+-----------
+--Init
+-----------
+
+
+function onLoad(dataToLoad)
+	statData = {}
+	
+	setupButtons()
+	
+	--load saved data
+	--[[increase brackets around decompress call to keep data from loading--]]
+	if dataToLoad != '' then
+		decompress(dataToLoad)
+	end
+	
+	startLuaCoroutine(self,'updateDisplayAll')
+end
+
+-----------
+--save/load
+-----------
+
+function decompress(dataToLoad)
+	local data = JSON.decode(dataToLoad)
+	for i, v in ipairs(data) do
+		for indexName, val in pairs(statData) do
+			if val.entryIndex == i then
+				statData[indexName].value = data[i]
+			end
+		end
+	end
+end
+	
+function forceSave()
+	local dataToSave = {}
+	for k, v in pairs(statData) do
+		dataToSave[v.entryIndex] = v.value
+	end
+	local data = JSON.encode(dataToSave)
+	--remove marks to clear save data
+	--data = ''
+	
+	self.script_state = data
+	
+	return data
+end
+
+-----------
+--updates
+-----------
+
+function updateDisplayAll()
+	for i=1, 5 do
+		coroutine.yield(0)
+	end
+	local params = {}
+	local prefix = ''
+	for k, v in pairs(statData) do
+		params.index = v.index
+		prefix = string.sub(tostring(k), 1, 3)
+		if prefix == 'tx_' then
+			params.value = v.value
+			self.editInput(params)
+		elseif prefix == 'ts_' then
+			if v.value == 0 then
+				params.label = ''
+			elseif v.value == 1 then
+				params.label = toggleSquareFill
+			end
+			self.editButton(params)
+		elseif prefix == 'tc_' then
+			if v.value == 0 then
+				params.label = ''
+			elseif v.value == 1 then
+				params.label = toggleCircleFill
+			end
+			self.editButton(params)
+		elseif prefix == 'ct_' then
+			params.label = v.value
+			self.editButton(params)
+		end
+	end
+	return 1
+end
+
+function updateOne(location)
+	local params = {}
+	params.index = statData[location].index
+	local prefix = string.sub(location, 1, 3)
+	--change toggle display
+	if prefix == 'ts_' then
+		if statData[location].value == 1 then
+			params.label = toggleSquareFill
+		else
+			params.label = ''
+		end
+	elseif prefix == 'tc_' then
+		if statData[location].value == 1 then
+			params.label = toggleCircleFill
+		else
+			params.label = ''
+		end
+	elseif prefix == 'ct_' then
+		params.label = statData[location].value
+	end
+	
+	self.editButton(params)
+	forceSave()
+end
+
+----------
+--Functions
+----------
+
+function plus(location)
+	statData[location].value = statData[location].value + 1
+	updateOne(location)
+end
+
+function minus(location)
+	statData[location].value = statData[location].value - 1
+	updateOne(location)
+end
+
+function toggle(location)
+	if statData[location].value == 0 then
+		statData[location].value = 1
+	elseif statData[location].value == 1 then
+		statData[location].value = 0
+	end
+	updateOne(location)
+end
+
+function dud()
+end
+
+function input(location)
+	if location == 'tx_survivorName' then
+		self.setName(statData[location].value)
+	end
+	local i = statData[location].index
+	local inputs = self.getInputs()
+	for k, v in pairs(inputs) do
+		if v.index == i then
+			statData[location].value = v.value
+			break
+		end
+	end
+	forceSave()
+end
