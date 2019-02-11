@@ -1,0 +1,114 @@
+--Gold Smoke Knight
+-------------------------
+--variables
+---------------------------
+monsterTable = {
+	monster = 'Gold Smoke Knight',
+	level = 1,
+	huntCardPlacement = nil,
+	huntLocation = nil,
+	showdownDecks = {
+		lvl1 = {
+			B = 9,        
+			A = 7, 
+			L = 2, 
+			S = {'Indomitable','Mauler','Secondary Forge','Frustration','Blacken'}
+		},
+		lvl2 = nil,
+		lvl3 = nil
+	},
+	showdownStats = {
+		lvl1 = {
+			mov = 8,
+			tgh = 27,
+			spd = 0,
+			dmg = 0,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl2 = nil,
+		lvl3 = nil
+	},
+	showdownTerrain = {
+		specifiedCards = nil,
+		randomCards = 0
+	}
+}
+
+
+
+
+
+huntObjTriggerGUID = '51b619'
+showdownObjTriggerGUID = 'edeb20'
+huntTriggered = false
+showdownTriggered = false
+
+-----------------------
+--init
+------------------------
+function onLoad()
+	initialized = true
+end
+
+
+------------------------
+--Triggers
+------------------------
+
+function onCollisionEnter(info)
+	if huntTriggered == false and initialized == true then
+		local obj = info.collision_object
+		local guid = obj.getGUID()
+		if guid == huntObjTriggerGUID and huntTriggered == false then
+			hunt()
+		elseif guid == showdownObjTriggerGUID and showdownTriggered == false then
+			showdown()
+		end
+	end
+end
+
+function onPickedUp()
+	if huntTriggered == true then
+		cleanupHunt()
+	end
+	if showdownTriggered == true then
+		cleanupShowdown()
+	end
+end
+
+--[[ inactive, exit collision method
+function onCollisionExit(info2)
+	local obj = info2.collision_object
+	local guid = obj.getGUID()
+	if guid == huntObjTriggerGUID then
+		cleanupHunt()
+	elseif guid == showdownObjTriggerGUID then
+		cleanupShowdown()
+	end
+end
+--]]
+
+-------------------------
+--Global Calls
+------------------------
+function hunt()
+	Global.call('setupHunt', monsterTable)
+	huntTriggered = true
+end
+
+function cleanupHunt()
+	Global.call('cleanupHunt')
+	huntTriggered = false
+end
+
+function showdown()
+	Global.call('setupShowdown', monsterTable)
+	showdownTriggered = true
+end
+
+function cleanupShowdown()
+	Global.call('cleanupShowdown')
+	showdownTriggered = false
+end

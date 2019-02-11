@@ -1,0 +1,173 @@
+---------------------
+--DRAGON KING
+---------------------
+
+monsterTable = {
+	monster = 'Dragon King',
+	level = 1,
+	huntCardPlacement = {
+		'__',
+		'E',
+		'',
+		'E',
+		'E',
+		'',
+		'__',
+		'E',
+		'',
+		'',
+		'E',
+		'',
+		'__'
+	},
+	huntLocation = {
+		6,
+		9,
+		12,
+		12
+	},
+	showdownDecks = {
+		lvl1 = {
+			B = 8,        
+			A = 4, 
+			L = 0, 
+			S = {'Irradiate','Unseen Agony'}
+		},
+		lvl2 = {
+			B = 8,        
+			A = 7, 
+			L = 1,
+			S = {'Irradiate','Unseen Agony'}
+		},
+		lvl3 = {
+			B = 9,        
+			A = 8, 
+			L = 2,
+			S = {'Irradiate','Unseen Agony','Smolder'}
+		},
+		dyingGod = {
+			B = {'Gnash','Mournful Swipe','One-Two Punch','Overheat','Rough Smack'},
+			A = {'Ashen Return','Countdown','Glowing Fist','Heated Strike','Crisis Crater'} ,
+			L = {'Death Descending'},
+			S = {'Irradiate','Unseen Agony','Smolder','Trample','Life'}
+		},
+	},
+	showdownStats = {
+		lvl1 = {
+			mov = 10,
+			tgh = 13,
+			spd = 0,
+			dmg = 0,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl2 = {	            
+			mov = 10,
+			tgh = 15,
+			spd = 1,
+			dmg = 1,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl3 = {	
+			mov = 10,
+			tgh = 17,
+			spd = 2,
+			dmg = 2,
+			acc = 0,
+			evs = 0,
+			lck = 1,
+		},
+		dyingGod = {	
+			mov = 10,
+			tgh = 17,
+			spd = 2,
+			dmg = 3,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+	},
+	showdownTerrain = {
+		specifiedCards = {'2 Toppled Pillar', '1 Stone Columns'},
+		randomCards = 0
+	}
+}
+
+
+
+
+huntObjTriggerGUID = '51b619'
+showdownObjTriggerGUID = 'edeb20'
+huntTriggered = false
+showdownTriggered = false
+
+-----------------------
+--init
+------------------------
+function onLoad()
+	initialized = true
+end
+
+
+------------------------
+--Triggers
+------------------------
+
+function onCollisionEnter(info)
+	if huntTriggered == false and initialized == true then
+		local obj = info.collision_object
+		local guid = obj.getGUID()
+		if guid == huntObjTriggerGUID and huntTriggered == false then
+			hunt()
+		elseif guid == showdownObjTriggerGUID and showdownTriggered == false then
+			showdown()
+		end
+	end
+end
+
+function onPickedUp()
+	if huntTriggered == true then
+		cleanupHunt()
+	end
+	if showdownTriggered == true then
+		cleanupShowdown()
+	end
+end
+
+--[[ inactive, exit collision method
+function onCollisionExit(info2)
+	local obj = info2.collision_object
+	local guid = obj.getGUID()
+	if guid == huntObjTriggerGUID then
+		cleanupHunt()
+	elseif guid == showdownObjTriggerGUID then
+		cleanupShowdown()
+	end
+end
+--]]
+
+-------------------------
+--Global Calls
+------------------------
+function hunt()
+	Global.call('setupHunt', monsterTable)
+	huntTriggered = true
+end
+
+function cleanupHunt()
+	Global.call('cleanupHunt')
+	huntTriggered = false
+end
+
+function showdown()
+	Global.call('setupShowdown', monsterTable)
+	showdownTriggered = true
+end
+
+function cleanupShowdown()
+	Global.call('cleanupShowdown')
+	showdownTriggered = false
+end

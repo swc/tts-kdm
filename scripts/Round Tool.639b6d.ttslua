@@ -1,0 +1,97 @@
+tokens = {
+	p1TokenGUID = '3d1fd5',
+	p1SurvivalActionAGUID = 'd6c354',
+p1SurvivalActionBGUID = 'b43546',
+	p1SurvivalActionCGUID = '65a521',
+	p1SurvivalActionDGUID = 'd9b05b',
+p1SurvivalActionEGUID = 'f16e21',	
+	p2TokenGUID = '7f76f1',
+	p2SurvivalActionAGUID = 'b7a730',
+p2SurvivalActionBGUID = 'b56c16',
+	p2SurvivalActionCGUID = '4a0bff',
+	p2SurvivalActionDGUID = '4850fc',
+p2SurvivalActionEGUID = '7213d2',
+	p3TokenGUID = '542822',
+	p3SurvivalActionAGUID = '790a2c',
+p3SurvivalActionBGUID = 'ab66c0',
+	p3SurvivalActionCGUID = 'e380d6',
+	p3SurvivalActionDGUID = '9bb0fc',
+p3SurvivalActionEGUID = 'dbe6f5',
+	p4TokenGUID = '93fa5f',
+	p4SurvivalActionAGUID = '87a2b4',
+p4SurvivalActionBGUID = '68fcc5',
+	p4SurvivalActionCGUID = '551fee',
+	p4SurvivalActionDGUID = '7d67bf',
+p4SurvivalActionEGUID = '13e3c5',
+	p5TokenGUID = '161bc2',
+	p5SurvivalActionAGUID = '3d527d',
+p5SurvivalActionBGUID = '5e571d',
+	p5SurvivalActionCGUID = '25b999',
+	p5SurvivalActionDGUID = '262d9d',
+p5SurvivalActionEGUID = '81f172',
+p6TokenGUID = 'a27a12',
+	p6SurvivalActionAGUID = 'd02c0b',
+p6SurvivalActionBGUID = '5ddc52',
+	p6SurvivalActionCGUID = 'f2d051',
+	p6SurvivalActionDGUID = '3963c4',
+p6SurvivalActionEGUID = 'def834',
+}
+
+gears = {
+	p1GearGUID = '1b5c7a',
+	p2GearGUID = 'fd8b97',
+	p3GearGUID = '86e4fd',
+	p4GearGUID = 'f7c730',
+	
+	p5GearGUID = '161bc2',
+	
+p6GearGUID = 'a27a12',
+}
+
+function onLoad()
+	self.createButton({
+		click_function = 'newRound',
+		function_owner = self,
+		label = 'Next Round',
+		position = {0,0.10,0},
+		width = 1800,
+		height = 600,
+		font_size = 300,
+	})
+end
+
+function newRound()
+	local token = {}
+	for k, v in pairs(tokens) do
+		token = getObjectFromGUID(v)
+		token.setRotationSmooth({0,180,0})
+	end
+	if string.find(self.getDescription(), 'true') then
+		local gear = {}
+		local sheet = {}
+		local sheetGUID = {}
+		local buttonTable = {}
+		for k, v in pairs(gears) do
+			gear = getObjectFromGUID(v)
+			sheetGUID = gear.getVar('FullCharSheetGUID')
+			sheet = getObjectFromGUID(sheetGUID)
+			if sheet then
+				buttonTable = sheet.getTable('buttons')
+				buttonTable.counts.t_dodge = 0
+				buttonTable.counts.t_surge = 0
+				buttonTable.counts.t_dash = 0
+				if buttonTable.counts.t_encourage then
+					buttonTable.counts.t_encourage = 0
+				end
+				if buttonTable.counts.t_embolden then
+					buttonTable.counts.t_embolden = 0
+				end
+				if buttonTable.counts.t_overcharge then
+					buttonTable.counts.t_overcharge = 0
+				end
+				sheet.setTable('buttons', buttonTable)
+				sheet.call('updateFromOutside', {false})
+			end
+		end
+	end
+end

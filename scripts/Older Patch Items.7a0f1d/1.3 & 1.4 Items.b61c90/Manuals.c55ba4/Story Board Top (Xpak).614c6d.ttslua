@@ -1,0 +1,723 @@
+--KDM Storybook
+
+---------------------------------
+--Vars
+--------------------------------
+manualsIndex = {
+	tab1 = {
+		tabName = 'Rules',
+		pages = {
+			{pageName = 'Introduction', stateNum = 4},
+			{pageName = 'Prologue', stateNum = 7},
+			{pageName = 'First Story', stateNum = 25},
+			{pageName = 'Survival Guide', stateNum = 39},
+			{pageName = 'Survivors', stateNum = 43},
+			{pageName = 'Monsters', stateNum = 51},
+			{pageName = 'Resources', stateNum = 59},
+			{pageName = 'Terrain', stateNum = 62},
+			{pageName = 'Hunt Phase', stateNum = 64},
+			{pageName = 'Showdown Phase', stateNum = 68},
+			{pageName = 'Settlement Phase', stateNum = 82},
+			{pageName = 'Game Variants', stateNum = 88},
+			{pageName = 'Glossary', stateNum = 90},
+		}
+	},
+	tab2 = {
+		tabName = 'Timeline Events',
+		pages = {
+			{pageName = 'Returning Survivors', stateNum = 2},
+			{pageName = 'Endless Screams', stateNum = 4},
+			{pageName = 'Bone Witch', stateNum = 6},
+			{pageName = 'Hands of Heat', stateNum = 8},
+			{pageName = 'Armored Strangers', stateNum = 10},
+			{pageName = 'Phoenix Feather', stateNum = 12},
+			{pageName = 'Regal Visit', stateNum = 14},
+			{pageName = 'Principle: Conviction', stateNum = 16},
+			{pageName = 'Watched', stateNum = 18},
+			{pageName = 'Hooded Knight', stateNum = 20},
+		}
+	},
+	tab3 = {
+		tabName = 'Hunt Events',
+		pages = {
+			{pageName = 'Random Events 1-8', stateNum = 2},
+			{pageName = 'Random Events 9-15', stateNum = 3},
+			{pageName = 'Random Events 16-25', stateNum = 4},
+			{pageName = 'Random Events 26-31', stateNum = 5},
+			{pageName = 'Random Events 32-44', stateNum = 6},
+			{pageName = 'Random Events 45-53', stateNum = 7},
+			{pageName = 'Random Events 54-63', stateNum = 8},
+			{pageName = 'Random Events 64-71', stateNum = 9},
+			{pageName = 'Random Events 72-80', stateNum = 10},
+			{pageName = 'Random Events 81-87', stateNum = 11},
+			{pageName = 'Random Events 88-96', stateNum = 12},
+			{pageName = 'Random Events 97-100', stateNum = 13},
+			{pageName = 'Mineral Gathering', stateNum = 14},
+			{pageName = 'Herb Gathering', stateNum = 16},
+			{pageName = 'Overwhelming Darkness', stateNum = 18},
+			{pageName = 'Run Away', stateNum = 20},
+		}
+	},
+	tab4 = {
+		tabName = 'Showdown Setups',
+		pages = {
+			{pageName = 'White Lion', stateNum = 2},
+			{pageName = 'Screaming Antelope', stateNum = 4},
+			{pageName = 'Phoenix', stateNum = 6},
+			{pageName = 'Nemesis: Butcher', stateNum = 8},
+			{pageName = "Nemesis: King's Man", stateNum = 10},
+			{pageName = 'Nemesis: The Hand', stateNum = 12},
+			{pageName = 'Nemesis: Watcher', stateNum = 14},
+			{pageName = 'Legendary Monsters', stateNum = 16},
+		}
+	},
+	tab5 = {
+		tabName = 'Settlement Events',
+		pages = {
+			{pageName = 'Intimacy', stateNum = 2},
+			{pageName = 'Birth of a Savior', stateNum = 4},
+			{pageName = 'Cooking', stateNum = 6},
+			{pageName = 'White Speaker', stateNum = 8},
+		}
+	},
+	tab6 = {
+		tabName = 'Milestone Events',
+		pages = {
+			{pageName = 'Age', stateNum = 2},
+			{pageName = 'Bold', stateNum = 4},
+			{pageName = 'Insight', stateNum = 6},
+			{pageName = 'See the Truth', stateNum = 8},
+			{pageName = 'White Secret', stateNum = 10},
+			{pageName = 'Principle: Death', stateNum = 12},
+			{pageName = 'Principle: New Life', stateNum = 14},
+			{pageName = 'Principle: Society', stateNum = 16},
+			{pageName = 'Hooded Knight', stateNum = 18},
+			{pageName = 'Game Over', stateNum = 20},
+		}
+	},
+	tab7 = {
+		tabName = 'Severe Injuries',
+		pages = {
+			{pageName = 'Brain Trauma', stateNum = 2},
+			{pageName = 'Head, Arms', stateNum = 3},
+			{pageName = 'Body, Waist, Legs', stateNum = 4},
+		}
+	},
+	tab8 = {
+		tabName = 'Monster Events',
+		pages = {
+			{pageName = 'Zero Presence', stateNum = 2},
+			{pageName = 'Crush and Devour', stateNum = 4},
+			{pageName = 'Legendary Lungs', stateNum = 6},
+			{pageName = "King's Step", stateNum = 8},
+			{pageName = "King's Curse", stateNum = 10},
+			{pageName = 'Run Away', stateNum = 12},
+			{pageName = 'Blackout', stateNum = 14},
+			{pageName = 'Game Over', stateNum = 16},
+		}
+	},
+	tab9 = {
+		tabName = 'Dung Beetle Knight',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'Rumbling in the Dark', stateNum = 5},
+			{pageName = 'Showdown: Dung Beetle Knight', stateNum = 11},
+			{pageName = 'Spelunking of Death', stateNum = 13},
+			{pageName = 'Underground Sow', stateNum = 15},
+			{pageName = 'Black Harvest', stateNum = 17},
+			{pageName = 'Secret Meeting', stateNum = 19},
+		}
+	},
+	tab10 = {
+		tabName = 'Gorm',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'The Approaching Storm', stateNum = 3},
+			{pageName = 'Fetid Grotto', stateNum = 5},
+			{pageName = 'Final March', stateNum = 7},
+			{pageName = 'Showdown: Gorm', stateNum = 9},
+			{pageName = 'Melting Horror', stateNum = 11},
+		}
+	},
+	tab11 = {
+		tabName = 'Lonely Tree',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'The Lonely Lady', stateNum = 3},
+			{pageName = 'Showdown: Lonely Tree', stateNum = 11},
+		}
+	},
+	tab12 = {
+		tabName = 'Dragon King',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'Glowing Crater', stateNum = 5},
+			{pageName = 'Showdown: Dragon King', stateNum = 7},
+			{pageName = 'Meltdown', stateNum = 9},
+			{pageName = 'Foundlings', stateNum = 11},
+			{pageName = 'Intimacy', stateNum = 13},
+			{pageName = "Midnight's Children", stateNum = 15},
+			{pageName = 'Awake (Courage)', stateNum = 17},
+			{pageName = 'Awake (Understanding)', stateNum = 17},
+			{pageName = 'Unveil the Sky', stateNum = 19},
+			{pageName = 'Faces in the Sky', stateNum = 21},
+			{pageName = 'The Tomb', stateNum = 23},
+			{pageName = 'Showdown: The Tyrant', stateNum = 25},
+			{pageName = 'Death of the Dragon King', stateNum = 27},
+		}
+	},
+	tab13 = {
+		tabName = 'Flower Knight',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = "A Crone's Tale", stateNum = 5},
+			{pageName = 'Showdown: Flower Knight', stateNum = 11},
+			{pageName = 'The Forest Wants What It Wants', stateNum = 13},
+			{pageName = 'Breakthrough', stateNum = 15},
+			{pageName = 'Sense Memory', stateNum = 17},
+			{pageName = 'A Warm Virus', stateNum = 19},
+			{pageName = 'Necrotoxic Mistletoe', stateNum = 21},
+
+		}
+	},
+	tab14 = {
+		tabName = 'Spidicules',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'Young Rivals', stateNum = 5},
+			{pageName = 'Showdown: Spidicules', stateNum = 9},
+			{pageName = 'The Forest Wants What It Wants', stateNum = 11},
+			{pageName = 'Spidisisyphus', stateNum = 13},
+			{pageName = "Puppet's Embalming", stateNum = 15},
+			{pageName = 'Silk Surgery', stateNum = 17},
+			{pageName = 'Taken (Showdown)', stateNum = 19},
+			{pageName = 'Taken (Settlement)', stateNum = 20},
+		}
+	},
+	tab15 = {
+		tabName = 'Manhunter',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'The Hanged Man', stateNum = 3},
+			{pageName = 'Showdown: Manhunter', stateNum = 9},
+			{pageName = 'Lottery', stateNum = 11},
+			{pageName = 'Death Pit', stateNum = 13},
+			{pageName = 'Sonorous Rest', stateNum = 15},
+			{pageName = 'Bleeding Heart', stateNum = 17},
+			{pageName = 'Tools of War', stateNum = 19},
+		}
+	},
+	tab16 = {
+		tabName = 'Sunstalker',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'Promise Under the Sun', stateNum = 5},
+			{pageName = 'Showdown: Sunstalker', stateNum = 9},
+			{pageName = 'Conquer Your Shadow', stateNum = 11},
+			{pageName = 'Sky Fishing', stateNum = 13},
+			{pageName = 'The Pool and the Sun', stateNum = 15},
+			{pageName = 'Intimacy', stateNum = 17},
+			{pageName = 'Sun Dipping', stateNum = 19},
+			{pageName = 'The Great Sky Gift', stateNum = 21},
+			{pageName = 'Birth of Color', stateNum = 23},
+			{pageName = 'Final Gift', stateNum = 25},
+			{pageName = 'Umbilical Symbiosis', stateNum = 27},
+			{pageName = 'Edged Tonometry', stateNum = 29},
+			{pageName = 'Warriors of the Sun', stateNum = 31},
+			{pageName = 'The Great Devourer', stateNum = 33},
+		}
+	},
+	tab17 = {
+		tabName = 'Lion Knight',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'An Uninvited Guest', stateNum = 5},
+			{pageName = 'Places, Everyone!', stateNum = 7},
+			{pageName = 'Showdown: Lion Knight', stateNum = 9},
+			{pageName = 'Intermission: Defeat', stateNum = 11},
+			{pageName = 'Intermission: Victory', stateNum = 12},
+			{pageName = 'Strange Caravan', stateNum = 13},
+			{pageName = 'Finale', stateNum = 15},
+		}
+	},
+	tab18 = {
+		tabName = 'Lion God',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = 'The Silver City', stateNum = 3},
+			{pageName = 'Showdown: Lion God', stateNum = 9},
+			{pageName = 'Necropolis', stateNum = 11},
+			{pageName = 'The Knowledge Worm', stateNum = 13},
+			{pageName = 'A Gracious Host', stateNum = 15},
+			{pageName = 'Death Reading', stateNum = 17},
+		}
+	},
+	tab19 = {
+		tabName = 'Slenderman',
+		pages = {
+			{pageName = 'Rules', stateNum = 2},
+			{pageName = "It's Already Here", stateNum = 3},
+			{pageName = 'Showdown: Slenderman', stateNum = 9},
+			{pageName = 'Dark Place', stateNum = 11},
+			{pageName = 'Light-Forging', stateNum = 13},
+			{pageName = 'Forgotten Fear', stateNum = 15},
+		}
+	},
+}
+
+xpakNames = {'Dung Beetle Knight', 'Flower Knight', 'Lion Knight', 'Gorm', 'Spidicules', 'Lion God', 'Lonely Tree', 'Manhunter', 'Slenderman', 'Dragon King', 'Sunstalker'}
+manualBoxGUID = ''
+zoneSelfGUID = ''
+
+activeBook = {}
+activeBookLabel = {}
+changingBook = false
+currentPage = 1
+
+cloneSpawnPos = {-100,100,-100}
+
+---------------------------------
+--Init
+--------------------------------
+
+
+function onLoad()
+
+	local table = Global.getTable('bags')
+	manualBoxGUID = table.manuals.guid
+	table = Global.getTable('zones')
+	zoneSelfGUID = table.zoneStoryT.guid
+
+	initTabButtons()
+	initBrowseButtons()
+
+end
+
+function initTabButtons()
+	local index = manualsIndex
+	local col = 4
+	local row = 5
+	local total = col * row
+	local endOfRow = {}
+	local num = {}
+	for i = 1, total do
+		num = i*col
+		table.insert(endOfRow, num)
+	end
+	local dx = ( 24 / col / 2 ) - 12
+	local dy = 8.5
+	local w = (12000 / col) - (col * 25)
+	local px = 24/ col
+	local py = -1.25
+	local i = 1
+	local h = 600
+	local f = 350
+	--xpak addition
+	local xpakH = 7
+	for k,v in pairs(index) do
+		local func = k
+		local label = v.tabName
+		self.createButton({
+			click_function = func,
+			function_owner = self,
+			label = label,
+			position = {dy,0.14,dx},
+			rotation = {0,90,0},
+			width = w,
+			height = h,
+			font_size = f
+		})
+		local nextRow = false
+		for j, l in pairs(endOfRow) do
+			if i == l then
+				nextRow = true
+			end
+		end
+		if nextRow == false then
+			dx = dx + px
+		elseif nextRow == true then
+			dx = dx - (px*(col-1))
+			dy = dy + py
+		end
+		--xpak adition
+		if i == 8 then
+			dy = dy + xpakH
+		end
+		i = i+1
+	end
+end
+
+function initBrowseButtons()
+	self.createButton({
+		click_function = 'nextPage',
+		function_owner = self,
+		label = '>',
+		position = {-8.5,0.14,-1.5},
+		rotation = {0,90,0},
+		width = 1400,
+		height = 600,
+		font_size = 350
+	})
+	self.createButton({
+		click_function = 'previousPage',
+		function_owner = self,
+		label = '<',
+		position = {-8.5,0.14,-4.5},
+		rotation = {0,90,0},
+		width = 1400,
+		height = 600,
+		font_size = 350
+	})
+end
+
+
+---------------------------------
+--Events
+--------------------------------
+
+function onDropped()
+	local zone = getObjectFromGUID(zoneSelfGUID)
+	local pos = self.getPosition()
+	zone.setPosition(pos)
+end
+
+---------------------------------
+--Button fnc
+--------------------------------
+
+function nextPage()
+	local zoneSelf = getObjectFromGUID(zoneSelfGUID)
+	local objects = zoneSelf.getObjects()
+	for k,v in pairs(objects) do
+		if string.find(v.getDescription(), 'reference') then
+			local obj = v.setState(currentPage + 1)
+			if obj != nil then
+				currentPage = currentPage + 1
+			end
+		end
+	end
+end
+
+function previousPage()
+	local zoneSelf = getObjectFromGUID(zoneSelfGUID)
+	local objects = zoneSelf.getObjects()
+	for k,v in pairs(objects) do
+		if string.find(v.getDescription(), 'reference') then
+			if currentPage != 1 then
+				local obj = v.setState(currentPage - 1)
+				if obj != nil then
+					currentPage = currentPage - 1
+				end
+			end
+		end
+	end
+end
+
+function tab1()
+	local tab = 'tab1'
+	tabClick(tab)
+end
+
+function tab2()
+	local tab = 'tab2'
+	tabClick(tab)
+end
+
+function tab3()
+	local tab = 'tab3'
+	tabClick(tab)
+end
+
+function tab4()
+	local tab = 'tab4'
+	tabClick(tab)
+end
+
+function tab5()
+	local tab = 'tab5'
+	tabClick(tab)
+end
+
+function tab6()
+	local tab = 'tab6'
+	tabClick(tab)
+end
+
+function tab7()
+	local tab = 'tab7'
+	tabClick(tab)
+end
+
+function tab8()
+	local tab = 'tab8'
+	tabClick(tab)
+end
+
+function tab9()
+	local tab = 'tab9'
+	tabClick(tab)
+end
+
+function tab10()
+	local tab = 'tab10'
+	tabClick(tab)
+end
+
+function tab11()
+	local tab = 'tab11'
+	tabClick(tab)
+end
+
+function tab12()
+	local tab = 'tab12'
+	tabClick(tab)
+end
+
+function tab13()
+	local tab = 'tab13'
+	tabClick(tab)
+end
+
+function tab14()
+	local tab = 'tab14'
+	tabClick(tab)
+end
+
+function tab15()
+	local tab = 'tab15'
+	tabClick(tab)
+end
+
+function tab16()
+	local tab = 'tab16'
+	tabClick(tab)
+end
+
+function tab17()
+	local tab = 'tab17'
+	tabClick(tab)
+end
+
+function tab18()
+	local tab = 'tab18'
+	tabClick(tab)
+end
+
+function tab19()
+	local tab = 'tab19'
+	tabClick(tab)
+end
+
+---------pages
+
+function page1()
+	local page = 1
+	pageClick(page)
+end
+
+function page2()
+	local page = 2
+	pageClick(page)
+end
+
+function page3()
+	local page = 3
+	pageClick(page)
+end
+
+function page4()
+	local page = 4
+	pageClick(page)
+end
+
+function page5()
+	local page = 5
+	pageClick(page)
+end
+
+function page6()
+	local page = 6
+	pageClick(page)
+end
+
+function page7()
+	local page = 7
+	pageClick(page)
+end
+
+function page8()
+	local page = 8
+	pageClick(page)
+end
+
+function page9()
+	local page = 9
+	pageClick(page)
+end
+
+function page10()
+	local page = 10
+	pageClick(page)
+end
+
+function page11()
+	local page = 11
+	pageClick(page)
+end
+
+function page12()
+	local page = 12
+	pageClick(page)
+end
+
+function page13()
+	local page = 13
+	pageClick(page)
+end
+
+function page14()
+	local page = 14
+	pageClick(page)
+end
+
+function page15()
+	local page = 15
+	pageClick(page)
+end
+
+function page16()
+	local page = 16
+	pageClick(page)
+end
+
+----------------------------------------
+--primary fcns
+---------------------------------------
+
+function tabClick(tab)
+	--clear books
+	changeBook(tab)
+	--clear last tab pages
+	local btns = self.getButtons()
+	for k,v in pairs(btns) do
+		local text = v.click_function
+		if string.find(text, 'page') then
+			local index = v.index
+			self.removeButton(index)
+		end
+	end
+	--create page list
+	local pagesTable = manualsIndex[tab].pages
+	local col = 1
+	local row = #pagesTable
+	local dx = 9
+	local dy = 5.75
+	local w = 2900
+	local px = 24/ col
+	local py = -0.95
+	local i = 1
+	local h = 400
+	local f = 300
+	local btn = {}
+	pageBtns = {}
+	for k,v in pairs(pagesTable) do
+		local func = 'page' .. i
+		local label = v.pageName
+		local btn = self.createButton({
+			click_function = func,
+			function_owner = self,
+			label = label,
+			position = {dy,0.14,dx},
+			rotation = {0,90,0},
+			width = w,
+			height = h,
+			font_size = f
+		})
+		dy = dy + py
+		i = i+1
+	end
+end
+
+function changeBook(tab)
+	if changingBook != true then
+		changingBook = true
+		local calledNameTag = manualsIndex[tab].tabName
+		--xpak addition
+		activeBook = calledNameTag
+		for k,v in pairs(xpakNames) do
+			if calledNameTag == v then
+				calledNameTag = calledNameTag .. ' Manual'
+			end
+		end
+		activeBookLabel = calledNameTag
+		startLuaCoroutine(self, 'changeBookCoroutine')
+	end
+end
+
+function changeBookCoroutine()
+	local alreadyExists = false
+	--clear old books
+	local zoneSelf = getObjectFromGUID(zoneSelfGUID)
+	local objects = zoneSelf.getObjects()
+	for k,v in pairs(objects) do
+		if string.find(v.getDescription(), 'reference') then
+			if v.getName() != activeBookLabel then
+				v.destruct()
+			else
+				alreadyExists = true
+			end
+		end
+	end
+	--spawn new one
+	if alreadyExists == false then
+		local book = {}
+		local manualBox = getObjectFromGUID(manualBoxGUID)
+		local cloneBox = manualBox.clone({position = {-100, 100, 100}})
+		coroutine.yield(0)
+		cloneBox.lock()
+		cloneBox.setScale({0,0,0})
+		objects = cloneBox.getObjects()
+		for k,v in pairs(objects) do
+			if v.name == activeBookLabel then
+				table.insert(book, v.guid)
+			end
+		end
+		--spawn
+		if book[1] != nil then
+			local params = {}
+			params.guid = book[1]
+			local pos = self.getPosition()
+			params.position = {pos[1]-1,pos[2] + 2,pos[3]-0.2}
+			local rot = self.getRotation()
+			params.rotation = {rot[1], rot[2] + 90, rot[3]}
+			book = cloneBox.takeObject(params)
+			currentPage = 1
+			coroutine.yield(0)
+		end
+		cloneBox.destruct()
+	end
+	changingBook = false
+	return 1
+end
+
+function pageClick(pageNum)
+	local zoneSelf = getObjectFromGUID(zoneSelfGUID)
+	local objects = zoneSelf.getObjects()
+	local tabTable = {}
+	if activeBook != nil then
+		for k,v in pairs(manualsIndex) do
+			if v.tabName == activeBook then
+				tabTable = v
+			end
+		end
+		local state = tabTable.pages[pageNum].stateNum
+		for k,v in pairs(objects) do
+			if string.find(v.getName(), string.sub(activeBook, 1, 4)) and string.find(v.getDescription(), 'reference') then
+				if currentPage != state then
+					v.setState(state)
+					currentPage = state
+				end
+			end
+		end
+	end
+end

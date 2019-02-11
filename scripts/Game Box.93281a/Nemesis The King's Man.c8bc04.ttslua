@@ -1,0 +1,138 @@
+--King's Man
+-------------------------
+--variables
+---------------------------
+monsterTable = {
+	monster = "King's Man",
+	level = 1,
+	huntCardPlacement = nil,
+	huntLocation = nil,
+	showdownDecks = {
+		lvl1 = {
+			B = 10,        
+			A = 2, 
+			L = 0, 
+			S = {'Weak Spot',"King's Aura","King's Combat",'Out-Fighting','Battle Tempo'}
+		},
+		lvl2 = {
+			B = 11,        
+			A = 4, 
+			L = 1,
+			S = {'Weak Spot',"King's Aura","King's Combat",'Out-Fighting','Battle Tempo','Silent Hymn'}
+		},
+		lvl3 = {
+			B = 12,        
+			A = 6, 
+			L = 1,
+			S = {'Weak Spot',"King's Aura","King's Combat",'Out-Fighting','Battle Tempo','Silent Hymn','Indomitable'}
+		},
+	},
+	showdownStats = {
+		lvl1 = {
+			mov = 5,
+			tgh = 12,
+			spd = 0,
+			dmg = 0,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl2 = {	            
+			mov = 6,
+			tgh = 15,
+			spd = 1,
+			dmg = 1,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl3 = {	
+			mov = 6,
+			tgh = 18,
+			spd = 2,
+			dmg = 2,
+			acc = 2,
+			evs = 0,
+			lck = 0,
+		},
+	},
+	showdownTerrain = {
+		specifiedCards = {'1 Stone Columns'},
+		randomCards = 2
+	}
+}
+
+
+
+huntObjTriggerGUID = '51b619'
+showdownObjTriggerGUID = 'edeb20'
+huntTriggered = false
+showdownTriggered = false
+
+-----------------------
+--init
+------------------------
+function onLoad()
+	initialized = true
+end
+
+
+------------------------
+--Triggers
+------------------------
+
+function onCollisionEnter(info)
+	if huntTriggered == false and initialized == true then
+		local obj = info.collision_object
+		local guid = obj.getGUID()
+		if guid == huntObjTriggerGUID and huntTriggered == false then
+			hunt()
+		elseif guid == showdownObjTriggerGUID and showdownTriggered == false then
+			showdown()
+		end
+	end
+end
+
+function onPickedUp()
+	if huntTriggered == true then
+		cleanupHunt()
+	end
+	if showdownTriggered == true then
+		cleanupShowdown()
+	end
+end
+
+--[[ inactive, exit collision method
+function onCollisionExit(info2)
+	local obj = info2.collision_object
+	local guid = obj.getGUID()
+	if guid == huntObjTriggerGUID then
+		cleanupHunt()
+	elseif guid == showdownObjTriggerGUID then
+		cleanupShowdown()
+	end
+end
+--]]
+
+-------------------------
+--Global Calls
+------------------------
+function hunt()
+	Global.call('setupHunt', monsterTable)
+	huntTriggered = true
+end
+
+function cleanupHunt()
+	Global.call('cleanupHunt')
+	huntTriggered = false
+end
+
+function showdown()
+	Global.call('setupShowdown', monsterTable)
+	showdownTriggered = true
+end
+
+function cleanupShowdown()
+	Global.call('cleanupShowdown')
+	showdownTriggered = false
+end

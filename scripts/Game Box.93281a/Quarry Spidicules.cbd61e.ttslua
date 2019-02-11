@@ -1,0 +1,156 @@
+---------------------
+--SPIDICULES
+---------------------
+
+monsterTable = {
+	monster = 'Spidicules',
+	level = 1,
+	huntCardPlacement = {
+		'__',
+		'E',
+		'E',
+		'',
+		'',
+		'E',
+		'S',
+		'',
+		'E',
+		'E',
+		'',
+		'',
+		'__'
+	},
+	huntLocation = {
+		5,
+		8,
+		11,
+		11
+	},
+	showdownDecks = {
+		lvl1 = {
+			B = 5,        
+			A = 4, 
+			L = 0, 
+			S = {'Twitching Leg Pile','Frantic Spinning','Spawn','Spiderling Action'}
+		},
+		lvl2 = {
+			B = 8,        
+			A = 5, 
+			L = 0,
+			S = {'Twitching Leg Pile','Hivemind','Feeding Time','Spawn','Spiderling Action'}
+		},
+		lvl3 = {
+			B = 12,        
+			A = 7, 
+			L = 2,
+			S = {'Twitching Leg Pile','Hivemind','Necrotoxins','10,000 Teeth','Spawn','Spiderling Action'}
+		},
+	},
+	showdownStats = {
+		lvl1 = {
+			mov = 11,
+			tgh = 8,
+			spd = 0,
+			dmg = 0,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl2 = {	            
+			mov = 14,
+			tgh = 10,
+			spd = 1,
+			dmg = 1,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+		lvl3 = {	
+			mov = 16,
+			tgh = 12,
+			spd = 2,
+			dmg = 2,
+			acc = 0,
+			evs = 0,
+			lck = 0,
+		},
+	},
+	showdownTerrain = {
+		specifiedCards = {'1 Silk Nest','1 Egg Sacs'},
+		randomCards = 2
+	}
+}
+
+
+huntObjTriggerGUID = '51b619'
+showdownObjTriggerGUID = 'edeb20'
+huntTriggered = false
+showdownTriggered = false
+
+-----------------------
+--init
+------------------------
+function onLoad()
+	initialized = true
+end
+
+
+------------------------
+--Triggers
+------------------------
+
+function onCollisionEnter(info)
+	if huntTriggered == false and initialized == true then
+		local obj = info.collision_object
+		local guid = obj.getGUID()
+		if guid == huntObjTriggerGUID and huntTriggered == false then
+			hunt()
+		elseif guid == showdownObjTriggerGUID and showdownTriggered == false then
+			showdown()
+		end
+	end
+end
+
+function onPickedUp()
+	if huntTriggered == true then
+		cleanupHunt()
+	end
+	if showdownTriggered == true then
+		cleanupShowdown()
+	end
+end
+
+--[[ inactive, exit collision method
+function onCollisionExit(info2)
+	local obj = info2.collision_object
+	local guid = obj.getGUID()
+	if guid == huntObjTriggerGUID then
+		cleanupHunt()
+	elseif guid == showdownObjTriggerGUID then
+		cleanupShowdown()
+	end
+end
+--]]
+
+-------------------------
+--Global Calls
+------------------------
+function hunt()
+	Global.call('setupHunt', monsterTable)
+	huntTriggered = true
+end
+
+function cleanupHunt()
+	Global.call('cleanupHunt')
+	huntTriggered = false
+end
+
+function showdown()
+	Global.call('setupShowdown', monsterTable)
+	showdownTriggered = true
+end
+
+function cleanupShowdown()
+	Global.call('cleanupShowdown')
+	showdownTriggered = false
+end

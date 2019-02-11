@@ -1,0 +1,35 @@
+staticGridObjGUID = '1ea721'
+pStationGUID = 'fd8b97'
+
+function onLoad()
+	staticGridObj = getObjectFromGUID(staticGridObjGUID)
+	pStation = getObjectFromGUID(pStationGUID)
+end
+
+function onPickedUp()
+	local gPos = self.getPosition()
+	if gPos[1] > -19 and gPos[1] < 19 then
+		if gPos[3] > -14 and gPos[3] < 14 then
+			local pColor = self.getColorTint()
+			if pStation then
+				local charSheet = pStation.getVar('FullCharSheet')
+				if charSheet != '' then
+					local table = charSheet.getTable('buttons')
+					local range = table.movement.display.label
+					range = tonumber(range)
+					local params = {gPos,pColor, range}
+					if staticGridObj then
+						staticGridObj.call('overlay',params)
+					end
+				end
+			end
+		end
+	end
+end
+
+function onDropped()
+	if staticGridObj then
+		staticGridObj.call('kill',{})
+	end
+end
+

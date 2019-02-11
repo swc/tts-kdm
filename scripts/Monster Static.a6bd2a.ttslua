@@ -1,0 +1,68 @@
+function overlay(params)
+	local gPos = params[1]
+	local pColor = params[2]
+	local r = params[3]
+	local scaleArea = params[4]
+	local lPos = self.positionToLocal(gPos)
+	local a = 0
+	
+	if r then
+		a = ((r*2)+1)^2
+	else
+		return
+	end
+	
+	local overlayParams = {}
+	
+	if pColor then
+		overlayParams = {
+			click_function = 'noGo',
+			function_owner = self,
+			label = '+',
+			width = 750*scaleArea,
+			height = 750*scaleArea,
+			color = {pColor[1], pColor[2], pColor[3], 0.4},
+			position = {0,0,0},
+			font_size = 300,
+			font_color = {0,0,0,1}
+		}
+	else
+		return
+	end
+	local x = -r
+	local y = -r
+	local offset = 1.6
+	local btnParams = overlayParams
+	btnParams.position = lPos
+	btnParams.position.y = 0.8
+	
+	for i = 1, a do
+		local sum = math.abs(x) + math.abs(y)
+		if sum <= r then
+			if x == 0 and y == 0 then
+			else
+				btnParams.position.x = (x*offset)-lPos[1]
+				btnParams.position.z = (y*offset)+lPos[3]
+				if btnParams.position.x < 18 and btnParams.position.x > -18 then
+					if btnParams.position.z < 13 and btnParams.position.z > -13 then
+						self.createButton(btnParams)
+					end
+				end
+			end
+		end
+		if y == r then
+			x = x + 1
+			y = -r
+		else
+			y = y + 1
+		end
+	end
+end
+		
+		
+function kill()
+	self.clearButtons()
+end
+
+function noGo()
+end
