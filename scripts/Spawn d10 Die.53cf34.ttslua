@@ -32,7 +32,8 @@ setting.cleanupDelay = 10
 setting.colorDie = false
 
 --Turn on/off printing of the player who rolled (true or false)
-setting.print.player = true
+--TODO: Deepsteve set this to false to fix issue with die spawner breaking... investigate further
+setting.print.player = false
 --Turn on/off printing of individual results
 setting.print.individual = true
 --Turn on/off printing of "total" results (adding them together)

@@ -32,13 +32,14 @@ setting.cleanupDelay = -1
 setting.colorDie = false
 
 --Turn on/off printing of the player who rolled (true or false)
-setting.print.player = true
+--TODO: Deepsteve set this to false to fix issue with die spawner breaking... investigate further
+setting.print.player = false
 --Turn on/off printing of individual results
 setting.print.individual = true
 --Turn on/off printing of "total" results (adding them together)
 setting.print.total = false
 --Use player color when printing roll results:
-setting.print.playerColor = false
+setting.print.playerColor = true
 
 --If this tool will work with other copies of itself (true or false)
 --Any roller clicked by the same color player will be treated as the same
