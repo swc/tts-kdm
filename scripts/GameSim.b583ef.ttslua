@@ -1,17 +1,5 @@
 --[[
 	-- extra logic to add eventually
-	if x:find("acc") then
-		if x:find("acc%+weaponProf") then
-			local objbtns = FullCharSheet.getTable("buttons")
-			for i, v in pairs(objbtns) do
-				prefix = string.sub(i, 1, 12)
-				if prefix == "proficiency_" then
-					if v.label ~= '' then
-						Baseacc = Baseacc - 1
-					end
-				end
-			end
-
 	if x:find("str") then
 		if x:find("str%+insanity") then
 			BaseStr = tonumber(getObjectFromGUID(self.getVar("FullCharSheetGUID")).getTable("buttons").insanity.label)
@@ -761,7 +749,7 @@ function getPlayerGearGrid(charSheetName, playerStat)
 		end
 	end
 
-	playerStat.selected_weapon_stats = read_weapon_stats(playerStat.selected_weapon_desc)
+	playerStat.selected_weapon_stats = read_weapon_stats(playerStat.selected_weapon_desc, charSheetName)
 end
 
 function verbose_toggle()
@@ -1145,7 +1133,7 @@ function monster_attack(playerIndex)
 	forceSave()
 end
 
-function read_weapon_stats(weaponDesc)
+function read_weapon_stats(weaponDesc, playerCharSheetName)
 	local regxEverythingExceptComma = '([^,]+)'
 	local playerWeapon = { speed = 0, acc = 0, str = 0, luck = 0 }
 
@@ -1155,7 +1143,12 @@ function read_weapon_stats(weaponDesc)
 		end
 
 		if x:find("acc") then
-			playerWeapon.acc = tonumber(string.match(x, "%d+"))
+			-- See if there is a [..] expression in the acc stat (this is currently only the case for the Twilight Sword)
+			if x:find("%[") then
+				playerWeapon.acc = eval_acc_expression(x, playerCharSheetName)
+			else
+				playerWeapon.acc = tonumber(string.match(x, "%d+"))
+			end
 		end
 
 		if x:find("str") then
@@ -1168,6 +1161,31 @@ function read_weapon_stats(weaponDesc)
 	end
 
 	return playerWeapon
+end
+
+-- DeepSteve added this to fix the Twilight Sword
+function eval_acc_expression(x, playerCharSheetName)
+	local playerCharSheet = Global.call("getCharSheet", { charSheetName = playerCharSheetName })
+	local j, k = x:find("%[.*%]")
+	local expression = x:sub(j+1, k-1)
+	local wpi, wpj = expression:find("weaponProf")
+	if wpi then
+		local weaponProf = 0
+		local table = playerCharSheet.getTable('buttons')
+		if table ~= NIL then
+			local prefix = "t_proficiency_"
+			for i, v in pairs(table) do
+				if i:sub(1, #prefix) == prefix then
+					if v.display.label ~= '' then
+						weaponProf = weaponProf + 1
+					end
+				end
+			end
+		end
+		expression = expression:gsub("weaponProf", weaponProf)
+	end
+
+	return tonumber(dynamic.eval(expression))
 end
 
 function player_attack(playerIndex, isBlind)
