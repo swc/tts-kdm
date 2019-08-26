@@ -33,7 +33,6 @@ function overlay(params)
 	local y = -r
 	local offset = 1.6
 	local btnParams = overlayParams
-	btnParams.position = lPos
 	btnParams.position.y = 0.8
 	
 	for i = 1, a do
